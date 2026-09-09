@@ -1,6 +1,8 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useState, useRef, useEffect, type ReactNode } from "react";
+import { toast } from "sonner";
 import { useApp } from "@/lib/store";
+import { supabase } from "@/lib/supabase";
 import { Phone, Mail, MapPin, ChevronDown, UserCircle, Plus, LogOut, Check } from "lucide-react";
 
 const GATE_KEY = "rl_profile_done_v1";
@@ -164,6 +166,80 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const currentClient = state.clients.find((c) => c.id === state.currentClientId);
 
+  // --- Client Notifications Effect ---
+  const prevClientReservations = useRef<Record<string, string>>({});
+  
+  useEffect(() => {
+    if (!currentClient) return;
+    
+    const clientRes = state.reservations.filter((r) => r.client_id === currentClient.id);
+    const currentStatuses: Record<string, string> = {};
+    
+    let hasNewConfirmation = false;
+
+    clientRes.forEach(r => {
+      currentStatuses[r.id] = r.statut;
+      const oldStatut = prevClientReservations.current[r.id];
+      // Note: we only trigger if we previously KNEW it was pending and now it's confirmed
+      if (oldStatut === "pending" && r.statut === "confirmed") {
+        const vehicule = state.vehicules.find(v => v.id === r.voiture_id);
+        const nomVehicule = vehicule ? `${vehicule.marque} ${vehicule.modele}` : "votre véhicule";
+        
+        toast.success(`🎉 Bonne nouvelle, ${currentClient.prenom} !`, {
+          description: `Votre réservation pour ${nomVehicule} a été confirmée.`,
+          duration: 10000,
+          action: {
+            label: "Voir",
+            onClick: () => {
+              window.location.href = "/mes-reservations";
+            }
+          }
+        });
+
+        if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+          new Notification("🎉 Réservation confirmée ! — Référence Location", {
+            body: `Votre réservation pour ${nomVehicule} a été confirmée par l'administrateur.`,
+            icon: "/logo.png",
+          });
+        }
+        
+        hasNewConfirmation = true;
+      }
+    });
+
+    // Optionally ask for notification permissions if there are changes
+    if (hasNewConfirmation && typeof window !== "undefined" && "Notification" in window && Notification.permission === "default") {
+       Notification.requestPermission();
+    }
+
+    // Always update to current statuses to prevent duplicate toasts
+    prevClientReservations.current = currentStatuses;
+  }, [state.reservations, currentClient, state.vehicules]);
+
+  // --- Realtime sync for clients ---
+  useEffect(() => {
+    if (!currentClient || !supabase) return;
+
+    const channel = supabase
+      .channel("client-reservations")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "reservations", filter: `client_id=eq.${currentClient.id}` },
+        (payload) => {
+          const updatedRes = payload.new as any;
+          setState((s) => ({
+            ...s,
+            reservations: s.reservations.map(r => r.id === updatedRes.id ? updatedRes : r)
+          }));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase?.removeChannel(channel);
+    };
+  }, [currentClient]);
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
@@ -203,10 +279,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
           </nav>
 
-          {/* Right side: account switcher */}
+          {/* Right side: account switcher — masqué dans l'espace admin */}
           <div className="flex items-center gap-2">
-            {currentClient && <AccountSwitcher />}
-            {!currentClient && (
+            {!pathname.startsWith("/admin") && currentClient && <AccountSwitcher />}
+            {!pathname.startsWith("/admin") && !currentClient && (
               <button
                 onClick={() => {
                   setState((s) => ({ ...s, showAddAccountGate: true }));
@@ -219,7 +295,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </button>
             )}
             <a
-              href="tel:+261324672569"
+              href="tel:+261322472569"
               className="md:hidden text-primary text-sm"
               aria-label="Appeler le service client"
               title="Appeler le service client"
@@ -261,29 +337,23 @@ export function AppShell({ children }: { children: ReactNode }) {
               <div className="font-display text-lg">Référence Location</div>
             </div>
             <p className="mt-4 text-sm text-muted-foreground max-w-xs">
-              Location de véhicules premium à Diego Suarez. Hyundai Getz P2, Hyundai Starex, Kia
-              Morning P2, Kia Morning P3 — 7j/7, 24h/24.
+              Location de véhicules premium à Diego Suarez.{" "}
+              {Array.from(new Set(state.vehicules.map((v) => v.marque + " " + v.modele))).join(", ")}
+              {" "}— 7j/7, 24h/24.
             </p>
           </div>
           <div>
             <div className="text-xs uppercase tracking-[0.18em] text-primary mb-3">Adresse</div>
             <div className="text-sm text-muted-foreground flex items-start gap-2">
               <MapPin className="h-4 w-4 mt-0.5 text-primary" />
-              <span>Diego Suarez (Antsiranana) 201, Madagascar</span>
+              <span>En face Mitabe · Antsiranana, Madagascar</span>
             </div>
           </div>
           <div>
             <div className="text-xs uppercase tracking-[0.18em] text-primary mb-3">Téléphone</div>
             <a
-              href="tel:+261344691102"
-              className="text-sm flex items-center gap-2 text-muted-foreground hover:text-foreground"
-            >
-              <Phone className="h-4 w-4 text-primary" />
-              034 46 911 02
-            </a>
-            <a
               href="tel:+261322472569"
-              className="mt-1 text-sm flex items-center gap-2 text-muted-foreground hover:text-foreground"
+              className="text-sm flex items-center gap-2 text-muted-foreground hover:text-foreground"
             >
               <Phone className="h-4 w-4 text-primary" />
               +261 32 24 725 69

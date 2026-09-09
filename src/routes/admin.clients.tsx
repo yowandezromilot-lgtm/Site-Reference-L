@@ -49,7 +49,20 @@ function AdminClients() {
                 return (
                   <tr key={c.id} className="border-b border-border/40 hover:bg-muted/30">
                     <td className="px-5 py-3">
-                      {c.prenom} {c.nom}
+                      <div className="flex items-center gap-3">
+                        {c.photo_url ? (
+                          <img
+                            src={c.photo_url}
+                            alt=""
+                            className="h-8 w-8 rounded-full object-cover border border-border shrink-0"
+                          />
+                        ) : (
+                          <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium shrink-0">
+                            {c.prenom?.[0]?.toUpperCase()}{c.nom?.[0]?.toUpperCase()}
+                          </div>
+                        )}
+                        <span className="font-medium">{c.prenom} {c.nom}</span>
+                      </div>
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">{c.telephone}</td>
                     <td className="px-5 py-3 text-muted-foreground">{c.email}</td>
@@ -74,21 +87,62 @@ function AdminClients() {
       </CardContent>
 
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto pr-4">
           {selected && (
             <>
-              <DialogHeader>
-                <DialogTitle className="font-display text-2xl">
-                  {selected.prenom} {selected.nom}
-                </DialogTitle>
+              <DialogHeader className="flex flex-row items-center gap-4 space-y-0 pb-4">
+                {selected.photo_url ? (
+                  <img
+                    src={selected.photo_url}
+                    alt=""
+                    className="h-16 w-16 rounded-full object-cover border-2 border-primary/20"
+                  />
+                ) : (
+                  <div className="h-16 w-16 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xl font-bold">
+                    {selected.prenom?.[0]?.toUpperCase()}{selected.nom?.[0]?.toUpperCase()}
+                  </div>
+                )}
+                <div>
+                  <DialogTitle className="font-display text-2xl">
+                    {selected.prenom} {selected.nom}
+                  </DialogTitle>
+                  <p className="text-sm text-muted-foreground mt-1">Client #{selected.id}</p>
+                </div>
               </DialogHeader>
-              <div className="grid sm:grid-cols-2 gap-3 text-sm">
+              <div className="grid sm:grid-cols-2 gap-3 text-sm border-t border-border/40 pt-4">
                 <Info label="Téléphone" value={selected.telephone} />
                 <Info label="Email" value={selected.email} />
                 <Info label="CIN" value={selected.cin} />
                 <Info label="Permis" value={selected.permis} />
                 <Info label="Inscrit le" value={selected.date_inscription} />
               </div>
+              
+              {/* Documents */}
+              {(selected.cin_photo_url || selected.cin_verso_url) && (
+                <div className="mt-4 pt-4 border-t border-border/40">
+                  <div className="text-xs uppercase tracking-[0.15em] text-primary mb-3">
+                    Documents d'identité
+                  </div>
+                  <div className="flex gap-4 overflow-x-auto pb-2">
+                    {selected.cin_photo_url && (
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">CIN (Recto)</span>
+                        <a href={selected.cin_photo_url} target="_blank" rel="noreferrer">
+                          <img src={selected.cin_photo_url} alt="CIN Recto" className="h-24 w-auto rounded border border-border object-cover hover:opacity-80 transition-opacity" />
+                        </a>
+                      </div>
+                    )}
+                    {selected.cin_verso_url && (
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">CIN (Verso)</span>
+                        <a href={selected.cin_verso_url} target="_blank" rel="noreferrer">
+                          <img src={selected.cin_verso_url} alt="CIN Verso" className="h-24 w-auto rounded border border-border object-cover hover:opacity-80 transition-opacity" />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
               <div className="mt-4">
                 <div className="text-xs uppercase tracking-[0.15em] text-primary mb-3">
                   Historique

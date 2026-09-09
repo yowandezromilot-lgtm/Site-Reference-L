@@ -91,7 +91,20 @@ function AdminReservations() {
                   <tr key={r.id} className="border-b border-border/40 hover:bg-muted/30">
                     <td className="px-5 py-3 font-mono text-primary">{r.id}</td>
                     <td className="px-5 py-3">
-                      {c?.prenom} {c?.nom}
+                      <div className="flex items-center gap-2">
+                        {c?.photo_url ? (
+                          <img
+                            src={c.photo_url}
+                            alt=""
+                            className="h-6 w-6 rounded-full object-cover border border-border shrink-0"
+                          />
+                        ) : (
+                          <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-medium shrink-0">
+                            {c?.prenom?.[0]?.toUpperCase()}{c?.nom?.[0]?.toUpperCase()}
+                          </div>
+                        )}
+                        <span className="font-medium">{c?.prenom} {c?.nom}</span>
+                      </div>
                     </td>
                     <td className="px-5 py-3">
                       {v?.marque} {v?.modele}
@@ -99,7 +112,14 @@ function AdminReservations() {
                     <td className="px-5 py-3 text-muted-foreground">
                       {r.date_depart} → {r.date_retour}
                     </td>
-                    <td className="px-5 py-3 text-muted-foreground">{r.lieu_prise}</td>
+                    <td className="px-5 py-3 text-muted-foreground">
+                      <div className="flex flex-col text-xs gap-0.5">
+                        <span className="text-foreground/80"><span className="text-[10px] text-muted-foreground mr-1">Départ:</span>{r.lieu_prise}</span>
+                        {r.lieu_retour && r.lieu_retour !== r.lieu_prise && (
+                          <span className="text-foreground/80"><span className="text-[10px] text-muted-foreground mr-1">Retour:</span>{r.lieu_retour}</span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-5 py-3 text-right">
                       {editingPriceId === r.id ? (
                         <div className="flex items-center justify-end gap-2">

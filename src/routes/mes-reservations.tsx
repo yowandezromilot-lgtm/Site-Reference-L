@@ -102,8 +102,11 @@ function MesReservations() {
                         {r.date_depart} → {r.date_retour}
                       </span>
                       <span className="inline-flex items-center gap-1.5">
-                        <MapPin className="h-4 w-4" />
-                        {r.lieu_prise}
+                        <MapPin className="h-4 w-4 shrink-0" />
+                        <span className="truncate max-w-[200px] sm:max-w-none">
+                          {r.lieu_prise}
+                          {r.lieu_retour && r.lieu_retour !== r.lieu_prise ? ` → ${r.lieu_retour}` : ""}
+                        </span>
                       </span>
                     </div>
                   </div>

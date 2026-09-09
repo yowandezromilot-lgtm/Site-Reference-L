@@ -62,6 +62,7 @@ const emptyForm: Omit<Vehicule, "id" | "nb_locations" | "disponible"> = {
   immatriculation: "",
   places: 5,
   prix_jour: 100000,
+  prix_hors_ville: 130000,
   emoji: "🚗",
   image_url: "",
   images: [],
@@ -253,7 +254,7 @@ function AdminVehicules() {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div>
                     <Label>Places</Label>
                     <Input
@@ -270,6 +271,15 @@ function AdminVehicules() {
                       className="mt-1.5"
                       value={form.prix_jour}
                       onChange={(e) => setForm({ ...form, prix_jour: +e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label className="truncate" title="Prix hors ville (Ar)">Prix hors ville (Ar)</Label>
+                    <Input
+                      type="number"
+                      className="mt-1.5"
+                      value={form.prix_hors_ville || 0}
+                      onChange={(e) => setForm({ ...form, prix_hors_ville: +e.target.value })}
                     />
                   </div>
                   <div>
@@ -386,6 +396,7 @@ function AdminVehicules() {
                 <th className="text-left px-5 py-3">Immat.</th>
                 <th className="text-left px-5 py-3">Places</th>
                 <th className="text-right px-5 py-3">Prix / jour</th>
+                <th className="text-right px-5 py-3">Prix hors ville</th>
                 <th className="text-left px-5 py-3">Statut</th>
                 <th className="text-right px-5 py-3">Actions</th>
               </tr>
@@ -411,6 +422,9 @@ function AdminVehicules() {
                   <td className="px-5 py-3 font-mono text-xs">{v.immatriculation}</td>
                   <td className="px-5 py-3">{v.places}</td>
                   <td className="px-5 py-3 text-right text-primary">{formatAr(v.prix_jour)}</td>
+                  <td className="px-5 py-3 text-right text-primary/80">
+                    {v.prix_hors_ville ? formatAr(v.prix_hors_ville) : "—"}
+                  </td>
                   <td className="px-5 py-3">
                     <Badge
                       variant="outline"
@@ -431,6 +445,7 @@ function AdminVehicules() {
                           immatriculation: v.immatriculation,
                           places: v.places,
                           prix_jour: v.prix_jour,
+                          prix_hors_ville: v.prix_hors_ville || 0,
                           emoji: v.emoji,
                           image_url: v.image_url || "",
                           images: v.images || (v.image_url ? [v.image_url] : []),

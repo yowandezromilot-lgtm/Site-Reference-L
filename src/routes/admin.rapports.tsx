@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useApp, formatAr } from "@/lib/store";
+import { RotateCcw } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/rapports")({
   component: AdminRapports,
@@ -22,13 +25,17 @@ const MOIS = [
 ];
 
 function AdminRapports() {
-  const { state } = useApp();
+  const { state, setState } = useApp();
   const year = new Date().getFullYear();
 
   const byMonth = MOIS.map((_, i) => {
     const prefix = `${year}-${String(i + 1).padStart(2, "0")}`;
     return state.reservations
-      .filter((r) => r.statut !== "cancelled" && r.created_at.startsWith(prefix))
+      .filter(
+        (r) =>
+          (r.statut === "confirmed" || r.statut === "done") &&
+          r.created_at.startsWith(prefix)
+      )
       .reduce((s, r) => s + r.montant, 0);
   });
   const total = byMonth.reduce((s, n) => s + n, 0);
@@ -40,12 +47,29 @@ function AdminRapports() {
   const ranking = [...state.vehicules]
     .map((v) => ({
       ...v,
-      count: state.reservations.filter((r) => r.voiture_id === v.id && r.statut !== "cancelled")
-        .length,
+      count: state.reservations.filter(
+        (r) =>
+          r.voiture_id === v.id &&
+          (r.statut === "confirmed" || r.statut === "done")
+      ).length,
     }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 6);
   const maxRank = Math.max(1, ...ranking.map((r) => r.count));
+
+  const resetRapportsData = () => {
+    if (
+      !confirm(
+        "Voulez-vous effacer tout l'historique de démonstration des réservations pour repartir de 0 Ar ?"
+      )
+    )
+      return;
+    setState((s) => ({
+      ...s,
+      reservations: [],
+    }));
+    toast.success("Historique des réservations réinitialisé à zéro.");
+  };
 
   const stats = [
     { label: "Revenus annuels", value: formatAr(total) },
@@ -56,6 +80,22 @@ function AdminRapports() {
 
   return (
     <div className="grid gap-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-2xl">Rapports & Statistiques</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">Vue d'ensemble des revenus et performances de votre parc</p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={resetRapportsData}
+          className="text-xs text-muted-foreground hover:text-foreground"
+        >
+          <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+          Réinitialiser l'historique (0 Ar)
+        </Button>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
           <Card key={s.label} className="border-border/60">
@@ -100,9 +140,19 @@ function AdminRapports() {
             {ranking.map((v) => (
               <div key={v.id}>
                 <div className="flex items-center justify-between text-sm mb-1.5">
-                  <span>
-                    <span className="mr-2 text-lg">{v.emoji}</span>
-                    {v.marque} {v.modele}
+                  <span className="flex items-center gap-2.5">
+                    {v.image_url ? (
+                      <img
+                        src={v.image_url}
+                        alt=""
+                        className="w-12 h-8 object-cover rounded shadow-sm border border-border/50 bg-muted/50 shrink-0"
+                      />
+                    ) : (
+                      <span className="w-12 h-8 flex items-center justify-center text-xl bg-muted/50 rounded shrink-0">
+                        {v.emoji}
+                      </span>
+                    )}
+                    <span className="font-medium">{v.marque} {v.modele}</span>
                   </span>
                   <span className="text-muted-foreground">
                     {v.count} location{v.count > 1 ? "s" : ""}

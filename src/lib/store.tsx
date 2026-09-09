@@ -12,6 +12,7 @@ export interface Vehicule {
   immatriculation: string;
   places: number;
   prix_jour: number;
+  prix_hors_ville?: number;
   disponible: boolean;
   nb_locations: number;
   emoji: string;
@@ -40,21 +41,71 @@ export interface Reservation {
   date_depart: string;
   date_retour: string;
   lieu_prise: string;
+  lieu_retour?: string;
   montant: number;
   statut: ReservationStatut;
   created_at: string;
 }
 
-interface AppState {
+export interface Review {
+  id: string;
+  client_id?: number;
+  nom: string;
+  ville: string;
+  vehicule: string;
+  note: number;
+  date: string;
+  commentaire: string;
+}
+
+export interface AppState {
   vehicules: Vehicule[];
   clients: Client[];
   reservations: Reservation[];
+  reviews?: Review[];
   currentClientId: number;
   connectedClientIds: number[];
   isAdmin: boolean;
   showAddAccountGate?: boolean;
   hydrated?: boolean;
+  /** Nombre de nouvelles réservations non vues par l'admin */
+  newReservationsCount?: number;
+  /** Lieux personnalisés ajoutés par les utilisateurs */
+  customLieux?: string[];
 }
+
+export const initialReviews: Review[] = [
+  {
+    id: "REV-001",
+    nom: "Jean-Philippe R.",
+    ville: "La Réunion",
+    vehicule: "Hyundai Starex",
+    note: 5,
+    date: "Août 2026",
+    commentaire:
+      "Service impeccable du début à la fin ! Le Starex était en parfait état pour notre séjour en famille à Ramena et aux 3 Baies. Prise en charge directement à l'aéroport Arrachart sans attente.",
+  },
+  {
+    id: "REV-002",
+    nom: "Aina Rasolofo",
+    ville: "Antananarivo",
+    vehicule: "Kia Morning Phase 3",
+    note: 5,
+    date: "Juillet 2026",
+    commentaire:
+      "Excellente expérience de location à Diego. Voiture très propre, climatisée et faible consommation. Équipe disponible 24/7 et très arrangeante pour le retour en centre-ville.",
+  },
+  {
+    id: "REV-003",
+    nom: "Sophie & Marc D.",
+    ville: "France",
+    vehicule: "Hyundai Getz Phase 2",
+    note: 5,
+    date: "Août 2026",
+    commentaire:
+      "Nous avons loué la Getz pour visiter la Montagne d'Ambre et les environs. Tarifs très transparents sans mauvaise surprise, communication rapide sur WhatsApp et téléphone. Je recommande à 100% !",
+  },
+];
 
 const initialVehicules: Vehicule[] = [
   {
@@ -65,6 +116,7 @@ const initialVehicules: Vehicule[] = [
     immatriculation: "001 TAD",
     places: 5,
     prix_jour: 120000,
+    prix_hors_ville: 150000,
     disponible: true,
     nb_locations: 24,
     emoji: "🚗",
@@ -78,6 +130,7 @@ const initialVehicules: Vehicule[] = [
     immatriculation: "132 TAD",
     places: 9,
     prix_jour: 260000,
+    prix_hors_ville: 300000,
     disponible: true,
     nb_locations: 22,
     emoji: "🚐",
@@ -91,6 +144,7 @@ const initialVehicules: Vehicule[] = [
     immatriculation: "012 TAD",
     places: 5,
     prix_jour: 110000,
+    prix_hors_ville: 140000,
     disponible: true,
     nb_locations: 18,
     emoji: "🚗",
@@ -104,6 +158,7 @@ const initialVehicules: Vehicule[] = [
     immatriculation: "045 TAD",
     places: 5,
     prix_jour: 130000,
+    prix_hors_ville: 160000,
     disponible: true,
     nb_locations: 32,
     emoji: "🚙",
@@ -157,56 +212,56 @@ const initialReservations: Reservation[] = [
     id: "RL-001",
     client_id: 1,
     voiture_id: 3,
-    date_depart: iso(addDays(today, -2)),
-    date_retour: iso(addDays(today, 3)),
+    date_depart: iso(addDays(today, -35)),
+    date_retour: iso(addDays(today, -30)),
     lieu_prise: "Aéroport Arrachart",
     montant: 110000 * 5,
-    statut: "confirmed",
-    created_at: iso(addDays(today, -5)),
+    statut: "done",
+    created_at: iso(addDays(today, -38)),
   },
   {
     id: "RL-002",
     client_id: 2,
     voiture_id: 2,
-    date_depart: iso(addDays(today, 1)),
-    date_retour: iso(addDays(today, 6)),
+    date_depart: iso(addDays(today, -40)),
+    date_retour: iso(addDays(today, -35)),
     lieu_prise: "Centre-ville Diego",
     montant: 260000 * 5,
-    statut: "pending",
-    created_at: iso(addDays(today, -1)),
+    statut: "done",
+    created_at: iso(addDays(today, -42)),
   },
   {
     id: "RL-003",
     client_id: 1,
     voiture_id: 1,
-    date_depart: iso(addDays(today, -30)),
-    date_retour: iso(addDays(today, -27)),
+    date_depart: iso(addDays(today, -50)),
+    date_retour: iso(addDays(today, -47)),
     lieu_prise: "Hôtel Allamanda",
     montant: 120000 * 3,
     statut: "done",
-    created_at: iso(addDays(today, -32)),
+    created_at: iso(addDays(today, -52)),
   },
   {
     id: "RL-004",
     client_id: 3,
     voiture_id: 4,
-    date_depart: iso(addDays(today, -60)),
-    date_retour: iso(addDays(today, -53)),
+    date_depart: iso(addDays(today, -70)),
+    date_retour: iso(addDays(today, -63)),
     lieu_prise: "Aéroport Arrachart",
     montant: 130000 * 7,
     statut: "done",
-    created_at: iso(addDays(today, -65)),
+    created_at: iso(addDays(today, -75)),
   },
   {
     id: "RL-005",
     client_id: 3,
     voiture_id: 2,
-    date_depart: iso(addDays(today, 5)),
-    date_retour: iso(addDays(today, 10)),
+    date_depart: iso(addDays(today, -60)),
+    date_retour: iso(addDays(today, -55)),
     lieu_prise: "Port de Diego",
     montant: 260000 * 5,
-    statut: "pending",
-    created_at: iso(addDays(today, 0)),
+    statut: "done",
+    created_at: iso(addDays(today, -62)),
   },
 ];
 
@@ -216,6 +271,7 @@ const defaultState: AppState = {
   vehicules: initialVehicules,
   clients: initialClients,
   reservations: initialReservations,
+  reviews: initialReviews,
   currentClientId: 1,
   connectedClientIds: [1],
   isAdmin: false,
@@ -375,15 +431,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
             const storedVehicules = localStorage.getItem("rl_vehicules_v1");
             const storedClients = localStorage.getItem("rl_clients_v1");
             const storedReservations = localStorage.getItem("rl_reservations_v1");
+            const storedReviews = localStorage.getItem("rl_reviews_v1");
             const storedProfile = localStorage.getItem("rl_profile_done_v1");
             const storedAdmin = localStorage.getItem("rl_admin_logged_in");
+            const storedLieux = localStorage.getItem("rl_custom_lieux_v1");
 
             const vehicules = storedVehicules ? JSON.parse(storedVehicules) : initialVehicules;
             const clients = storedClients ? JSON.parse(storedClients) : initialClients;
             const reservations = storedReservations ? JSON.parse(storedReservations) : initialReservations;
+            const reviews: Review[] = storedReviews ? JSON.parse(storedReviews) : initialReviews;
+            const customLieux: string[] = storedLieux ? JSON.parse(storedLieux) : [];
 
-            let activeClientId = 1;
-            let connectedIds = [1];
+            let activeClientId = 0;
+            let connectedIds: number[] = [];
             if (storedProfile) {
               const parsed = JSON.parse(storedProfile);
               if (parsed.clientId) activeClientId = parsed.clientId;
@@ -394,11 +454,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
               vehicules,
               clients,
               reservations,
+              reviews,
               currentClientId: activeClientId,
               connectedClientIds: connectedIds,
               isAdmin: storedAdmin === "true",
               showAddAccountGate: false,
               hydrated: true,
+              customLieux,
             });
           } catch (e) {
             console.warn("Erreur lors du chargement depuis localStorage", e);
@@ -488,8 +550,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
           }
         }
 
-        let activeClientId = 1;
-        let connectedIds = [1];
+        let activeClientId = 0;
+        let connectedIds: number[] = [];
         const stored =
           typeof window !== "undefined" ? localStorage.getItem("rl_profile_done_v1") : null;
         if (stored) {
@@ -500,7 +562,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             }
             if (Array.isArray(parsed.connectedIds)) {
               connectedIds = parsed.connectedIds;
-            } else {
+            } else if (activeClientId !== 0) {
               connectedIds = [activeClientId];
             }
           } catch (e) {
@@ -577,6 +639,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
             localStorage.setItem("rl_reservations_v1", JSON.stringify(next.reservations));
           } catch (e) {
             console.warn("Impossible de sauvegarder les réservations en localStorage", e);
+          }
+        }
+        if (prev.reviews !== next.reviews) {
+          try {
+            localStorage.setItem("rl_reviews_v1", JSON.stringify(next.reviews ?? []));
+          } catch (e) {
+            console.warn("Impossible de sauvegarder les avis en localStorage", e);
+          }
+        }
+        if (JSON.stringify(prev.customLieux) !== JSON.stringify(next.customLieux)) {
+          try {
+            localStorage.setItem("rl_custom_lieux_v1", JSON.stringify(next.customLieux ?? []));
+          } catch (e) {
+            console.warn("Impossible de sauvegarder les lieux en localStorage", e);
           }
         }
       }

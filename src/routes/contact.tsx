@@ -84,15 +84,15 @@ function Contact() {
               title="Adresse"
               lines={[
                 "Référence Location de Voiture",
-                "Diego Suarez (Antsiranana) 201",
+                "En face Mitabe · Antsiranana",
                 "Madagascar",
               ]}
             />
             <InfoLine
               icon={Phone}
               title="Téléphones"
-              lines={["034 46 911 02", "+261 32 24 725 69"]}
-              href="tel:+261344691102"
+              lines={["+261 32 24 725 69", "034 46 911 02"]}
+              href="tel:+261322472569"
             />
             <InfoLine
               icon={Mail}

@@ -23,8 +23,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { useApp, formatAr, daysBetween, nextReservationId, type Vehicule } from "@/lib/store";
-import { CalendarDays, Users, Car, Shield, Clock, MapPin, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { useApp, formatAr, daysBetween, nextReservationId, type Vehicule, type Review, initialReviews } from "@/lib/store";
+import { CalendarDays, Users, Car, Shield, Clock, MapPin, Sparkles, ChevronLeft, ChevronRight, Phone, ArrowRight, Star, Quote, CheckCircle2, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Réservez en ligne votre voiture à Diego Suarez : Hyundai Getz P2, Hyundai Starex, Kia Morning P2, Kia Morning P3. Disponible 7j/7.",
+          "Réservez en ligne votre voiture à Diego Suarez : citadines, berlines, monospaces et 4x4. Service 7j/7.",
       },
       { property: "og:title", content: "Référence Location de Voiture" },
       {
@@ -46,11 +46,13 @@ export const Route = createFileRoute("/")({
 });
 
 function Accueil() {
-  const { state } = useApp();
+  const { state, setState } = useApp();
   const [type, setType] = useState<string>("all");
   const [places, setPlaces] = useState<string>("all");
   const [dateDepart, setDateDepart] = useState("");
   const [dateRetour, setDateRetour] = useState("");
+  const [lieuDepart, setLieuDepart] = useState("Aéroport Arrachart");
+  const [lieuRetour, setLieuRetour] = useState("Aéroport Arrachart");
   const [selected, setSelected] = useState<Vehicule | null>(null);
 
   const filtered = useMemo(() => {
@@ -74,6 +76,10 @@ function Accueil() {
         setDateDepart={setDateDepart}
         dateRetour={dateRetour}
         setDateRetour={setDateRetour}
+        lieuDepart={lieuDepart}
+        setLieuDepart={setLieuDepart}
+        lieuRetour={lieuRetour}
+        setLieuRetour={setLieuRetour}
       />
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
@@ -94,7 +100,14 @@ function Accueil() {
               v={v}
               dateDepart={dateDepart}
               dateRetour={dateRetour}
-              onReserve={() => setSelected(v)}
+              onReserve={() => {
+                if (state.currentClientId === 0) {
+                  toast.error("Veuillez vous connecter pour réserver un véhicule.");
+                  setState((s) => ({ ...s, showAddAccountGate: true }));
+                } else {
+                  setSelected(v);
+                }
+              }}
             />
           ))}
           {filtered.length === 0 && (
@@ -105,6 +118,8 @@ function Accueil() {
         </div>
       </section>
 
+      <AvisClients />
+
       <Trust />
 
       <ReservationModal
@@ -112,6 +127,8 @@ function Accueil() {
         onClose={() => setSelected(null)}
         prefillDepart={dateDepart}
         prefillRetour={dateRetour}
+        prefillLieuDepart={lieuDepart}
+        prefillLieuRetour={lieuRetour}
       />
     </AppShell>
   );
@@ -122,46 +139,102 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
     <section className="relative overflow-hidden bg-gradient-hero">
       <div className="absolute inset-0 opacity-[0.05] bg-hero-glow" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-20 pb-24 sm:pt-28 sm:pb-32">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 px-3 py-1 text-xs uppercase tracking-[0.18em] text-primary">
-            <Sparkles className="h-3.5 w-3.5" />
-            Diego Suarez · Antsiranana
-          </div>
-          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl mt-6 leading-[1.05]">
-            La <span className="text-gradient-gold">référence</span> de la location{" "}
-            <br className="hidden sm:block" />
-            de voiture dans le Nord.
-          </h1>
-          <p className="mt-6 text-lg text-muted-foreground max-w-2xl">
-            Hyundai Getz P2, Hyundai Starex, Kia Morning P2, Kia Morning P3 — à la journée. Service
-            client 7j/7 — 24h/24, prise en charge à l'aéroport, en ville ou à votre hôtel.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button size="lg" asChild className="font-medium">
-              <a href="#parc">Réserver maintenant</a>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <a href="tel:+261344691102">Appeler 034 46 911 02</a>
-            </Button>
-          </div>
-        </div>
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
 
-        <div className="mt-16 grid grid-cols-3 gap-4 sm:gap-8 max-w-3xl">
-          <Stat value={`${vehiculesCount}+`} label="Véhicules au parc" />
-          <Stat value="12 ans" label="d'expérience" />
-          <Stat value="24/7" label="Disponibilité" />
+          {/* ── Colonne gauche : texte ── */}
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-primary bg-primary/5 backdrop-blur-sm">
+              <Sparkles className="h-3.5 w-3.5" />
+              Diego Suarez · Antsiranana
+            </div>
+            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl mt-6 leading-[1.05]">
+              La <span className="text-gradient-gold">référence</span> de la location{" "}
+              <br className="hidden sm:block" />
+              de voiture dans le Nord.
+            </h1>
+            <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed">
+              Large flotte de véhicules récents, confortables et parfaitement entretenus pour tous vos déplacements. Service client 7j/7 — 24h/24, prise en charge rapide à l'aéroport, en ville ou directement à votre hôtel.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3.5">
+              <Button size="lg" asChild className="font-medium shadow-gold cursor-pointer">
+                <a href="#parc" className="inline-flex items-center gap-2">
+                  Réserver maintenant
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="border-primary/40 hover:bg-primary/10 hover:text-primary transition-all cursor-pointer">
+                <a href="tel:+261322472569" className="inline-flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-primary" />
+                  Appeler +261 32 24 725 69
+                </a>
+              </Button>
+            </div>
+
+            {/* Cartes stats */}
+            <div className="mt-14 sm:mt-16 grid grid-cols-3 gap-3.5 sm:gap-6">
+              <div className="rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
+                <div className="font-display text-3xl sm:text-4xl text-gradient-gold font-bold">
+                  {vehiculesCount > 0 ? `${vehiculesCount}+` : "5+"}
+                </div>
+                <div className="text-[11px] sm:text-xs uppercase tracking-[0.16em] text-muted-foreground mt-1.5 font-medium">
+                  Véhicules au parc
+                </div>
+              </div>
+              <div className="rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
+                <div className="font-display text-3xl sm:text-4xl text-gradient-gold font-bold">
+                  12 <span className="text-sm sm:text-base font-sans font-normal text-primary/80">ans</span>
+                </div>
+                <div className="text-[11px] sm:text-xs uppercase tracking-[0.16em] text-muted-foreground mt-1.5 font-medium">
+                  D'expérience
+                </div>
+              </div>
+              <div className="rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
+                <div className="font-display text-3xl sm:text-4xl text-gradient-gold font-bold">
+                  24/7
+                </div>
+                <div className="text-[11px] sm:text-xs uppercase tracking-[0.16em] text-muted-foreground mt-1.5 font-medium">
+                  Disponibilité
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Colonne droite / Mobile : carte Google Maps ── */}
+          <div className="flex flex-col gap-3 mt-6 lg:mt-0">
+            <div className="rounded-2xl border border-primary/25 bg-card/40 backdrop-blur-sm overflow-hidden shadow-gold">
+              {/* En-tête carte */}
+              <div className="flex items-center gap-2.5 px-4 py-3 border-b border-primary/15 bg-card/60">
+                <div className="grid place-items-center h-7 w-7 rounded-full bg-primary/15 text-primary shrink-0">
+                  <MapPin className="h-3.5 w-3.5" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium leading-tight">Référence Location</p>
+                  <p className="text-xs text-muted-foreground leading-tight">En face Mitabe · Antsiranana, Madagascar</p>
+                </div>
+              </div>
+              {/* Map embed */}
+              <div className="relative w-full h-[260px] sm:h-[340px]">
+                <iframe
+                  title="Référence Location — Mitabe, Diego Suarez"
+                  src="https://maps.google.com/maps?ll=-12.27570,49.29065&t=m&z=19&output=embed"
+                  className="absolute inset-0 w-full h-full border-0 grayscale-[30%] saturate-[120%]"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+                {/* Overlay doré léger */}
+                <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-primary/10 rounded-b-2xl" />
+              </div>
+            </div>
+            {/* Badge sous la carte */}
+            <p className="text-center text-xs text-muted-foreground tracking-wide">
+              📍 Service disponible dans toute la région de Diana
+            </p>
+          </div>
+
         </div>
       </div>
     </section>
-  );
-}
-
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="border-t border-primary/30 pt-4">
-      <div className="font-display text-3xl sm:text-4xl text-primary">{value}</div>
-      <div className="text-xs uppercase tracking-[0.15em] text-muted-foreground mt-1">{label}</div>
-    </div>
   );
 }
 
@@ -174,13 +247,33 @@ interface SearchBarProps {
   setDateDepart: (v: string) => void;
   dateRetour: string;
   setDateRetour: (v: string) => void;
+  lieuDepart: string;
+  setLieuDepart: (v: string) => void;
+  lieuRetour: string;
+  setLieuRetour: (v: string) => void;
 }
 
 function SearchBar(p: SearchBarProps) {
+  const { state } = useApp();
+  
+  // Combine defaults, custom saved locations, and past reservation locations
+  const suggestions = Array.from(new Set([
+    "Aéroport Arrachart",
+    "Centre-ville Diego",
+    "Hôtel (Diego Suarez)",
+    "Ramena",
+    ...(state.customLieux ?? []),
+    ...state.reservations.map(r => r.lieu_prise),
+    ...state.reservations.map(r => r.lieu_retour)
+  ])).filter(Boolean) as string[];
+
+  // Extract unique vehicle types dynamically from existing vehicles
+  const vehicleTypes = Array.from(new Set(state.vehicules.map(v => v.type))).filter(Boolean);
+
   return (
     <div id="parc" className="mx-auto max-w-7xl px-4 sm:px-6 -mt-12 relative z-10">
       <Card className="border-primary/20 shadow-card">
-        <CardContent className="p-6 grid gap-4 md:grid-cols-5">
+        <CardContent className="p-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7">
           <div>
             <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
               Type
@@ -191,10 +284,9 @@ function SearchBar(p: SearchBarProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tous les types</SelectItem>
-                <SelectItem value="Hyundai Getz Phase 2">Hyundai Getz Phase 2</SelectItem>
-                <SelectItem value="Hyundai Starex">Hyundai Starex</SelectItem>
-                <SelectItem value="Kia Morning Phase 2">Kia Morning Phase 2</SelectItem>
-                <SelectItem value="Kia Morning Phase 3">Kia Morning Phase 3</SelectItem>
+                {vehicleTypes.map((t) => (
+                  <SelectItem key={t} value={t}>{t}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -215,6 +307,35 @@ function SearchBar(p: SearchBarProps) {
               </SelectContent>
             </Select>
           </div>
+          <div>
+            <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+              Lieu Départ
+            </Label>
+            <Input
+              list="lieux-suggestions"
+              value={p.lieuDepart}
+              onChange={(e) => p.setLieuDepart(e.target.value)}
+              className="mt-2"
+              placeholder="Ex: Aéroport..."
+            />
+          </div>
+          <div>
+            <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+              Lieu Retour
+            </Label>
+            <Input
+              list="lieux-suggestions"
+              value={p.lieuRetour}
+              onChange={(e) => p.setLieuRetour(e.target.value)}
+              className="mt-2"
+              placeholder="Ex: Centre-ville..."
+            />
+          </div>
+          <datalist id="lieux-suggestions">
+            {suggestions.map((s, i) => (
+              <option key={i} value={s} />
+            ))}
+          </datalist>
           <div>
             <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
               Départ
@@ -239,9 +360,10 @@ function SearchBar(p: SearchBarProps) {
           </div>
           <div className="flex items-end">
             <Button
-              className="w-full h-10"
+              className="w-full h-10 shadow-gold"
               onClick={() => {
-                document.getElementById("parc")?.scrollIntoView({ behavior: "smooth" });
+                const el = document.getElementById("parc");
+                if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: "smooth" });
               }}
             >
               Rechercher
@@ -385,6 +507,11 @@ function VehiculeCard({
             <div className="text-xs text-muted-foreground">
               par jour {jours ? `· ${jours} j = ${formatAr(v.prix_jour * jours)}` : ""}
             </div>
+            {v.prix_hors_ville && (
+              <div className="text-[10px] mt-0.5 text-primary/80 font-medium">
+                Hors ville : {formatAr(v.prix_hors_ville)} /j
+              </div>
+            )}
           </div>
           <Button disabled={!v.disponible} onClick={onReserve} size="sm">
             Réserver
@@ -400,11 +527,15 @@ function ReservationModal({
   onClose,
   prefillDepart,
   prefillRetour,
+  prefillLieuDepart,
+  prefillLieuRetour,
 }: {
   vehicule: Vehicule | null;
   onClose: () => void;
   prefillDepart: string;
   prefillRetour: string;
+  prefillLieuDepart?: string;
+  prefillLieuRetour?: string;
 }) {
   if (!vehicule) return null;
   return (
@@ -414,6 +545,8 @@ function ReservationModal({
       onClose={onClose}
       prefillDepart={prefillDepart}
       prefillRetour={prefillRetour}
+      prefillLieuDepart={prefillLieuDepart}
+      prefillLieuRetour={prefillLieuRetour}
     />
   );
 }
@@ -423,11 +556,15 @@ function ReservationModalInner({
   onClose,
   prefillDepart,
   prefillRetour,
+  prefillLieuDepart,
+  prefillLieuRetour,
 }: {
   vehicule: Vehicule;
   onClose: () => void;
   prefillDepart: string;
   prefillRetour: string;
+  prefillLieuDepart?: string;
+  prefillLieuRetour?: string;
 }) {
   const { state, setState } = useApp();
   const client = state.clients.find((c) => c.id === state.currentClientId);
@@ -435,20 +572,36 @@ function ReservationModalInner({
   const [tel, setTel] = useState(client?.telephone ?? "");
   const [depart, setDepart] = useState(prefillDepart);
   const [retour, setRetour] = useState(prefillRetour);
-  const [lieu, setLieu] = useState("Aéroport Arrachart");
+  const [lieuDepart, setLieuDepart] = useState(prefillLieuDepart || "Aéroport Arrachart");
+  const [lieuRetour, setLieuRetour] = useState(prefillLieuRetour || "Aéroport Arrachart");
+  const [horsVille, setHorsVille] = useState(false);
 
-  const validDates = depart && retour && new Date(retour) > new Date(depart);
+  const validDates = depart && retour && new Date(retour) >= new Date(depart);
   const jours = validDates ? daysBetween(depart, retour) : 0;
-  const total = jours * vehicule.prix_jour;
+  const prixApplicable = horsVille && vehicule.prix_hors_ville ? vehicule.prix_hors_ville : vehicule.prix_jour;
+  const total = jours * prixApplicable;
 
   const submit = () => {
-    if (!nom.trim() || !tel.trim() || !validDates || !lieu.trim()) {
-      toast.error("Merci de compléter tous les champs (date retour > date départ).");
+    if (state.currentClientId === 0) {
+      toast.error("Veuillez vous connecter pour valider la réservation.");
+      setState((s) => ({ ...s, showAddAccountGate: true }));
+      return;
+    }
+    if (!nom.trim() || !tel.trim() || !validDates || !lieuDepart.trim() || !lieuRetour.trim()) {
+      toast.error("Merci de compléter tous les champs avec des dates valides.");
       return;
     }
     const ref = nextReservationId(state.reservations);
+    // Save any new custom locations to the persistent list
+    const defaultLieux = ["Aéroport Arrachart", "Centre-ville Diego", "Hôtel (Diego Suarez)", "Ramena"];
+    const existingLieux = new Set([...defaultLieux, ...(state.customLieux ?? [])]);
+    const newLieux: string[] = [];
+    if (lieuDepart.trim() && !existingLieux.has(lieuDepart.trim())) newLieux.push(lieuDepart.trim());
+    if (lieuRetour.trim() && !existingLieux.has(lieuRetour.trim())) newLieux.push(lieuRetour.trim());
+
     setState((s) => ({
       ...s,
+      customLieux: [...new Set([...(s.customLieux ?? []), ...newLieux])],
       reservations: [
         ...s.reservations,
         {
@@ -457,7 +610,8 @@ function ReservationModalInner({
           voiture_id: vehicule.id,
           date_depart: depart,
           date_retour: retour,
-          lieu_prise: lieu,
+          lieu_prise: lieuDepart,
+          lieu_retour: lieuRetour,
           montant: total,
           statut: "pending",
           created_at: new Date().toISOString().slice(0, 10),
@@ -518,13 +672,42 @@ function ReservationModalInner({
               />
             </div>
           </div>
-          <div>
-            <Label>Lieu de prise en charge</Label>
-            <Input value={lieu} onChange={(e) => setLieu(e.target.value)} className="mt-1.5" />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Lieu de départ</Label>
+              <Input
+                value={lieuDepart}
+                onChange={(e) => setLieuDepart(e.target.value)}
+                className="mt-1.5"
+              />
+            </div>
+            <div>
+              <Label>Lieu de retour</Label>
+              <Input
+                value={lieuRetour}
+                onChange={(e) => setLieuRetour(e.target.value)}
+                className="mt-1.5"
+              />
+            </div>
           </div>
+          {vehicule.prix_hors_ville && (
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={horsVille}
+                onChange={(e) => setHorsVille(e.target.checked)}
+                className="h-4 w-4 rounded accent-primary cursor-pointer"
+              />
+              <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                Sortie <span className="font-medium text-foreground">hors ville</span>
+                <span className="ml-1.5 text-primary text-xs">({formatAr(vehicule.prix_hors_ville)}/j)</span>
+              </span>
+            </label>
+          )}
           <div className="rounded-md border border-primary/30 bg-primary/5 px-4 py-3 flex items-center justify-between">
             <span className="text-sm text-muted-foreground">
-              {jours} jour{jours > 1 ? "s" : ""} × {formatAr(vehicule.prix_jour)}
+              {jours} jour{jours > 1 ? "s" : ""} × {formatAr(prixApplicable)}
+              {horsVille && <span className="ml-1 text-primary text-xs">(hors ville)</span>}
             </span>
             <span className="font-display text-2xl text-primary">{formatAr(total)}</span>
           </div>
@@ -579,5 +762,245 @@ function Trust() {
         ))}
       </div>
     </section>
+  );
+}
+
+function AvisClients() {
+  const { state, setState } = useApp();
+  const [showModal, setShowModal] = useState(false);
+
+  const reviewsList = state.reviews && state.reviews.length > 0 ? state.reviews : initialReviews;
+  const avgRating = (reviewsList.reduce((acc, r) => acc + r.note, 0) / reviewsList.length).toFixed(1);
+
+  const handleOpenModal = () => {
+    if (state.currentClientId === 0) {
+      toast.error("Veuillez vous connecter pour laisser un avis.");
+      setState((s) => ({ ...s, showAddAccountGate: true }));
+      return;
+    }
+    setShowModal(true);
+  };
+
+  return (
+    <section className="border-t border-border/60 bg-card/20 py-16 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 px-3.5 py-1 text-xs uppercase tracking-[0.2em] text-primary bg-primary/5 backdrop-blur-sm mb-3">
+            <Star className="h-3.5 w-3.5 fill-primary text-primary" />
+            Témoignages
+          </div>
+          <h2 className="font-display text-3xl sm:text-4xl">Avis de nos clients</h2>
+          <p className="text-muted-foreground mt-3 text-sm sm:text-base">
+            Découvrez les retours d'expérience des voyageurs et résidents qui nous font confiance à Diego Suarez.
+          </p>
+
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <div className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm">
+              <div className="flex text-primary">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-primary" />
+                ))}
+              </div>
+              <span className="font-semibold text-foreground">{avgRating} / 5</span>
+              <span className="text-muted-foreground text-xs">· {reviewsList.length} avis</span>
+            </div>
+
+            <Button
+              size="sm"
+              onClick={handleOpenModal}
+              className="rounded-full shadow-gold"
+            >
+              <Plus className="h-4 w-4 mr-1.5" />
+              Donner votre avis
+            </Button>
+          </div>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {reviewsList.map((rev) => (
+            <Card
+              key={rev.id}
+              className="border-border/60 bg-card/40 backdrop-blur-sm shadow-card hover:border-primary/40 transition-all flex flex-col justify-between"
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex text-primary">
+                    {[...Array(rev.note)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-primary" />
+                    ))}
+                  </div>
+                  <Quote className="h-6 w-6 text-primary/30" />
+                </div>
+                <p className="text-sm text-foreground/90 italic leading-relaxed">
+                  "{rev.commentaire}"
+                </p>
+              </CardContent>
+              <div className="px-6 pb-6 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
+                <div>
+                  <div className="font-semibold text-foreground flex items-center gap-1.5">
+                    {rev.nom}
+                    <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <div className="text-muted-foreground text-[11px] mt-0.5">
+                    {rev.ville} · {rev.vehicule}
+                  </div>
+                </div>
+                <span className="text-muted-foreground font-mono text-[11px]">{rev.date}</span>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {showModal && (
+        <NewReviewModal onClose={() => setShowModal(false)} />
+      )}
+    </section>
+  );
+}
+
+function NewReviewModal({ onClose }: { onClose: () => void }) {
+  const { state, setState } = useApp();
+  const client = state.clients.find((c) => c.id === state.currentClientId);
+
+  const [nom, setNom] = useState(client ? `${client.prenom} ${client.nom}` : "");
+  const [ville, setVille] = useState("Diego Suarez");
+  const [vehicule, setVehicule] = useState(
+    state.vehicules.length > 0
+      ? `${state.vehicules[0].marque} ${state.vehicules[0].modele}`
+      : "Hyundai Getz Phase 2"
+  );
+  const [note, setNote] = useState(5);
+  const [commentaire, setCommentaire] = useState("");
+
+  const submit = () => {
+    if (!nom.trim() || !commentaire.trim()) {
+      toast.error("Veuillez remplir votre nom et votre commentaire.");
+      return;
+    }
+
+    const todayFr = new Date().toLocaleDateString("fr-FR", {
+      month: "long",
+      year: "numeric",
+    });
+    // Capitalize first letter of month
+    const formattedDate = todayFr.charAt(0).toUpperCase() + todayFr.slice(1);
+
+    const newRev: Review = {
+      id: `REV-${Date.now()}`,
+      client_id: state.currentClientId,
+      nom: nom.trim(),
+      ville: ville.trim() || "Madagascar",
+      vehicule: vehicule || "Véhicule loué",
+      note,
+      date: formattedDate,
+      commentaire: commentaire.trim(),
+    };
+
+    const currentReviews = state.reviews && state.reviews.length > 0 ? state.reviews : initialReviews;
+
+    setState((s) => ({
+      ...s,
+      reviews: [newRev, ...currentReviews],
+    }));
+
+    toast.success("Merci ! Votre avis a été publié avec succès.");
+    onClose();
+  };
+
+  return (
+    <Dialog open={true} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-display text-2xl">Donner votre avis</DialogTitle>
+          <DialogDescription>
+            Partagez votre expérience de location avec les futurs clients de Référence Location.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-4 py-2">
+          {/* Note par étoiles */}
+          <div>
+            <Label className="text-xs uppercase tracking-wider text-muted-foreground">Votre note</Label>
+            <div className="flex items-center gap-1.5 mt-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setNote(star)}
+                  className="p-1 hover:scale-110 transition-transform cursor-pointer focus:outline-none"
+                >
+                  <Star
+                    className={`h-7 w-7 ${
+                      star <= note
+                        ? "fill-primary text-primary"
+                        : "text-muted-foreground/30 hover:text-primary/50"
+                    }`}
+                  />
+                </button>
+              ))}
+              <span className="ml-2 font-semibold text-sm text-primary">{note} / 5</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Nom / Prénom</Label>
+              <Input
+                value={nom}
+                onChange={(e) => setNom(e.target.value)}
+                className="mt-1.5"
+                placeholder="Votre nom"
+              />
+            </div>
+            <div>
+              <Label>Ville / Origine</Label>
+              <Input
+                value={ville}
+                onChange={(e) => setVille(e.target.value)}
+                className="mt-1.5"
+                placeholder="Ex: Diego Suarez, Réunion..."
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label>Véhicule loué</Label>
+            <Select value={vehicule} onValueChange={setVehicule}>
+              <SelectTrigger className="mt-1.5">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {state.vehicules.map((v) => (
+                  <SelectItem key={v.id} value={`${v.marque} ${v.modele}`}>
+                    {v.marque} {v.modele}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label>Votre commentaire</Label>
+            <textarea
+              rows={4}
+              value={commentaire}
+              onChange={(e) => setCommentaire(e.target.value)}
+              placeholder="Décrivez votre expérience avec le véhicule, le service, l'équipe..."
+              className="mt-1.5 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground resize-none"
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose}>
+            Annuler
+          </Button>
+          <Button onClick={submit}>
+            Publier mon avis
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
