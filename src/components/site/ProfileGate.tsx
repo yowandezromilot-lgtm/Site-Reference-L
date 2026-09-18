@@ -55,16 +55,29 @@ export function ProfileGate({ children }: { children: ReactNode }) {
     if (!state.hydrated) return;
     const stored = localStorage.getItem(GATE_KEY);
     if (stored) {
-      const parsed = JSON.parse(stored);
-      if (state.clients.find((c) => c.id === parsed.clientId)) {
-        setState((s) => ({
-          ...s,
-          currentClientId: parsed.clientId,
-          connectedClientIds: parsed.connectedIds || [parsed.clientId],
-        }));
-        setDone(true);
-      } else {
-        // Clear invalid client id from localStorage to avoid getting stuck
+      try {
+        const parsed = JSON.parse(stored);
+        if (state.clients.find((c) => c.id === parsed.clientId)) {
+          setState((s) => {
+            if (
+              s.currentClientId === parsed.clientId &&
+              JSON.stringify(s.connectedClientIds) === JSON.stringify(parsed.connectedIds || [parsed.clientId])
+            ) {
+              return s;
+            }
+            return {
+              ...s,
+              currentClientId: parsed.clientId,
+              connectedClientIds: parsed.connectedIds || [parsed.clientId],
+            };
+          });
+          setDone(true);
+        } else {
+          // Clear invalid client id from localStorage to avoid getting stuck
+          localStorage.removeItem(GATE_KEY);
+          setDone(false);
+        }
+      } catch {
         localStorage.removeItem(GATE_KEY);
         setDone(false);
       }

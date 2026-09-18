@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { supabase } from "./supabase";
 
 export type VehiculeType = string;
@@ -601,11 +601,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     loadData();
   }, []);
 
-  const setState = (value: React.SetStateAction<AppState>) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const setState = useCallback((value: React.SetStateAction<AppState>) => {
     setStateInternal((prev) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const next = typeof value === "function" ? (value as any)(prev) : value;
-      if (hydrated) {
+      // We read `hydrated` inside setStateInternal to avoid stale closure issues
+      // while keeping setState reference stable via useCallback([], []).
+      const isHydrated = prev.hydrated;
+      if (isHydrated) {
         syncToSupabase(prev, next);
         if (prev.isAdmin !== next.isAdmin) {
           localStorage.setItem("rl_admin_logged_in", next.isAdmin ? "true" : "false");
@@ -664,7 +668,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
       return next;
     });
-  };
+  // Empty deps: setState is intentionally stable for its lifetime.
+  // hydrated is read from prev state inside setStateInternal, not from closure.
+  }, []);
 
   return <AppContext.Provider value={{ state, setState }}>{children}</AppContext.Provider>;
 }
