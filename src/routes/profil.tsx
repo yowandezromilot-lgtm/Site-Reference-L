@@ -55,7 +55,7 @@ function Profil() {
     setPhotoPreview(client?.photo_url);
     setCinRectoPreview(client?.cin_photo_url);
     setCinVersoPreview(client?.cin_verso_url);
-  }, [client?.id]);
+  }, [client]);
 
   if (!client) {
     return (
@@ -64,7 +64,9 @@ function Profil() {
           <Card className="border-border/60" style={{ boxShadow: "var(--shadow-card)" }}>
             <CardContent className="p-8">
               <p className="text-muted-foreground text-sm">Aucun profil client actif.</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">Veuillez créer un profil ou vous connecter depuis la page d'accueil.</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">
+                Veuillez créer un profil ou vous connecter depuis la page d'accueil.
+              </p>
               <Button
                 className="mt-6 w-full cursor-pointer"
                 onClick={() => {
@@ -270,13 +272,13 @@ function Profil() {
                     label="Prénom"
                     value={form.prenom}
                     disabled={!editing}
-                    onChange={(v) => setForm((prev) => prev ? { ...prev, prenom: v } : prev)}
+                    onChange={(v) => setForm((prev) => (prev ? { ...prev, prenom: v } : prev))}
                   />
                   <Field
                     label="Nom"
                     value={form.nom}
                     disabled={!editing}
-                    onChange={(v) => setForm((prev) => prev ? { ...prev, nom: v } : prev)}
+                    onChange={(v) => setForm((prev) => (prev ? { ...prev, nom: v } : prev))}
                   />
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -284,13 +286,13 @@ function Profil() {
                     label="Téléphone"
                     value={form.telephone}
                     disabled={!editing}
-                    onChange={(v) => setForm((prev) => prev ? { ...prev, telephone: v } : prev)}
+                    onChange={(v) => setForm((prev) => (prev ? { ...prev, telephone: v } : prev))}
                   />
                   <Field
                     label="Email"
                     value={form.email}
                     disabled={!editing}
-                    onChange={(v) => setForm((prev) => prev ? { ...prev, email: v } : prev)}
+                    onChange={(v) => setForm((prev) => (prev ? { ...prev, email: v } : prev))}
                   />
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -298,13 +300,13 @@ function Profil() {
                     label="N° CIN"
                     value={form.cin}
                     disabled={!editing}
-                    onChange={(v) => setForm((prev) => prev ? { ...prev, cin: v } : prev)}
+                    onChange={(v) => setForm((prev) => (prev ? { ...prev, cin: v } : prev))}
                   />
                   <Field
                     label="N° Permis"
                     value={form.permis}
                     disabled={!editing}
-                    onChange={(v) => setForm((prev) => prev ? { ...prev, permis: v } : prev)}
+                    onChange={(v) => setForm((prev) => (prev ? { ...prev, permis: v } : prev))}
                   />
                 </div>
 

@@ -38,14 +38,22 @@ function fileToDataUrl(file: File): Promise<string> {
       const MAX = 800;
       let { width, height } = img;
       if (width > MAX || height > MAX) {
-        if (width > height) { height = Math.round((height * MAX) / width);  width = MAX; }
-        else                { width  = Math.round((width  * MAX) / height); height = MAX; }
+        if (width > height) {
+          height = Math.round((height * MAX) / width);
+          width = MAX;
+        } else {
+          width = Math.round((width * MAX) / height);
+          height = MAX;
+        }
       }
       const canvas = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext("2d");
-      if (!ctx) { reject(new Error("Canvas non supporté")); return; }
+      if (!ctx) {
+        reject(new Error("Canvas non supporté"));
+        return;
+      }
       ctx.drawImage(img, 0, 0, width, height);
       URL.revokeObjectURL(url);
       resolve(canvas.toDataURL("image/jpeg", 0.75));
@@ -86,9 +94,7 @@ function AdminVehicules() {
   const [isCreatingType, setIsCreatingType] = useState(false);
   const [customType, setCustomType] = useState("");
 
-  const allTypes = Array.from(
-    new Set([...defaultTypes, ...state.vehicules.map((v) => v.type)])
-  );
+  const allTypes = Array.from(new Set([...defaultTypes, ...state.vehicules.map((v) => v.type)]));
 
   const save = () => {
     if (!form.marque || !form.modele || !form.immatriculation) {
@@ -100,9 +106,7 @@ function AdminVehicules() {
       // Edit mode
       setState((s) => ({
         ...s,
-        vehicules: s.vehicules.map((v) =>
-          v.id === editingId ? { ...v, ...form } : v
-        ),
+        vehicules: s.vehicules.map((v) => (v.id === editingId ? { ...v, ...form } : v)),
       }));
       toast.success(`${form.marque} ${form.modele} modifié.`);
     } else {
@@ -148,21 +152,26 @@ function AdminVehicules() {
             <h2 className="font-display text-xl">Parc de véhicules</h2>
             <p className="text-sm text-muted-foreground">{state.vehicules.length} véhicules</p>
           </div>
-          <Dialog open={open} onOpenChange={(val) => {
-            setOpen(val);
-            if (!val) {
-              setForm(emptyForm);
-              setEditingId(null);
-              setIsCreatingType(false);
-            }
-          }}>
-            <DialogTrigger asChild>
-              <Button onClick={() => {
+          <Dialog
+            open={open}
+            onOpenChange={(val) => {
+              setOpen(val);
+              if (!val) {
                 setForm(emptyForm);
                 setEditingId(null);
                 setIsCreatingType(false);
-                setOpen(true);
-              }}>
+              }
+            }}
+          >
+            <DialogTrigger asChild>
+              <Button
+                onClick={() => {
+                  setForm(emptyForm);
+                  setEditingId(null);
+                  setIsCreatingType(false);
+                  setOpen(true);
+                }}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Ajouter un véhicule
               </Button>
@@ -206,9 +215,9 @@ function AdminVehicules() {
                           }}
                           autoFocus
                         />
-                        <Button 
-                          type="button" 
-                          variant="outline" 
+                        <Button
+                          type="button"
+                          variant="outline"
                           onClick={() => {
                             setIsCreatingType(false);
                             setForm({ ...form, type: allTypes[0] || "" });
@@ -274,7 +283,9 @@ function AdminVehicules() {
                     />
                   </div>
                   <div>
-                    <Label className="truncate" title="Prix hors ville (Ar)">Prix hors ville (Ar)</Label>
+                    <Label className="truncate" title="Prix hors ville (Ar)">
+                      Prix hors ville (Ar)
+                    </Label>
                     <Input
                       type="number"
                       className="mt-1.5"
@@ -292,18 +303,31 @@ function AdminVehicules() {
                   </div>
                 </div>
                 <div>
-                  <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium">Photos du véhicule (Optionnelles)</Label>
+                  <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium">
+                    Photos du véhicule (Optionnelles)
+                  </Label>
                   <div className="mt-2 flex flex-wrap items-center gap-4">
                     {form.images?.map((imgUrl, index) => (
-                      <div key={index} className="relative group rounded-lg overflow-hidden border border-border/60 w-32 h-20">
-                        <img src={imgUrl} alt={`Aperçu ${index}`} className="w-full h-full object-cover" />
+                      <div
+                        key={index}
+                        className="relative group rounded-lg overflow-hidden border border-border/60 w-32 h-20"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`Aperçu ${index}`}
+                          className="w-full h-full object-cover"
+                        />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <button
                             type="button"
                             onClick={() => {
                               setForm((prev) => {
                                 const newImages = prev.images?.filter((_, i) => i !== index) || [];
-                                return { ...prev, images: newImages, image_url: newImages[0] || "" };
+                                return {
+                                  ...prev,
+                                  images: newImages,
+                                  image_url: newImages[0] || "",
+                                };
                               });
                             }}
                             className="p-1 rounded bg-destructive text-white hover:bg-destructive/80 transition-colors cursor-pointer"
@@ -312,7 +336,9 @@ function AdminVehicules() {
                           </button>
                         </div>
                         {index === 0 && (
-                          <span className="absolute bottom-0 left-0 right-0 bg-primary/90 text-primary-foreground text-[8px] uppercase tracking-wider text-center py-0.5 font-medium">Principale</span>
+                          <span className="absolute bottom-0 left-0 right-0 bg-primary/90 text-primary-foreground text-[8px] uppercase tracking-wider text-center py-0.5 font-medium">
+                            Principale
+                          </span>
                         )}
                       </div>
                     ))}
@@ -326,7 +352,9 @@ function AdminVehicules() {
                     </button>
                     <div className="text-xs text-muted-foreground">
                       <p>Ajoutez une ou plusieurs photos.</p>
-                      <p className="text-[10px] text-muted-foreground/60 mt-0.5">Format JPG/PNG, max 3 Mo</p>
+                      <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+                        Format JPG/PNG, max 3 Mo
+                      </p>
                     </div>
                   </div>
                   <input
@@ -340,25 +368,32 @@ function AdminVehicules() {
                       if (!file) return;
                       // Bloquer les fichiers trop grands
                       if (file.size > 3 * 1024 * 1024) {
-                        toast.error("Cette photo est trop grande (max 3 Mo). Veuillez compresser l'image avant de l'uploader.");
+                        toast.error(
+                          "Cette photo est trop grande (max 3 Mo). Veuillez compresser l'image avant de l'uploader.",
+                        );
                         e.target.value = "";
                         return;
                       }
                       // Avertissement si la photo est grande (> 1 Mo)
                       if (file.size > 1 * 1024 * 1024) {
-                        toast.warning(`Cette photo est volumineuse (${(file.size / 1024 / 1024).toFixed(1)} Mo). Pour de meilleures performances, préférez des images de moins de 1 Mo.`);
+                        toast.warning(
+                          `Cette photo est volumineuse (${(file.size / 1024 / 1024).toFixed(1)} Mo). Pour de meilleures performances, préférez des images de moins de 1 Mo.`,
+                        );
                       }
                       const url = await fileToDataUrl(file);
                       setForm((prev) => {
                         const newImages = [...(prev.images || []), url];
                         // Calculer la taille totale approximative en base64 (en Mo)
-                        const totalSizeMb = newImages.reduce((acc, img) => acc + (img.length * 3 / 4) / 1024 / 1024, 0);
+                        const totalSizeMb = newImages.reduce(
+                          (acc, img) => acc + (img.length * 3) / 4 / 1024 / 1024,
+                          0,
+                        );
                         if (totalSizeMb > 4) {
                           // On affiche l'avertissement en dehors du setState pour éviter les problèmes
                           setTimeout(() => {
                             toast.warning(
                               `Attention : le total des photos dépasse ${totalSizeMb.toFixed(1)} Mo. La sauvegarde locale peut échouer. Utilisez des images plus légères.`,
-                              { duration: 7000 }
+                              { duration: 7000 },
                             );
                           }, 100);
                         }
@@ -371,12 +406,15 @@ function AdminVehicules() {
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="ghost" onClick={() => {
-                  setOpen(false);
-                  setForm(emptyForm);
-                  setEditingId(null);
-                  setIsCreatingType(false);
-                }}>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setOpen(false);
+                    setForm(emptyForm);
+                    setEditingId(null);
+                    setIsCreatingType(false);
+                  }}
+                >
                   Annuler
                 </Button>
                 <Button onClick={save}>
@@ -437,29 +475,44 @@ function AdminVehicules() {
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex justify-end gap-1">
-                      <Button size="sm" variant="ghost" onClick={() => {
-                        setForm({
-                          marque: v.marque,
-                          modele: v.modele,
-                          type: v.type,
-                          immatriculation: v.immatriculation,
-                          places: v.places,
-                          prix_jour: v.prix_jour,
-                          prix_hors_ville: v.prix_hors_ville || 0,
-                          emoji: v.emoji,
-                          image_url: v.image_url || "",
-                          images: v.images || (v.image_url ? [v.image_url] : []),
-                        });
-                        setEditingId(v.id);
-                        setIsCreatingType(false);
-                        setOpen(true);
-                      }} title="Modifier le véhicule">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setForm({
+                            marque: v.marque,
+                            modele: v.modele,
+                            type: v.type,
+                            immatriculation: v.immatriculation,
+                            places: v.places,
+                            prix_jour: v.prix_jour,
+                            prix_hors_ville: v.prix_hors_ville || 0,
+                            emoji: v.emoji,
+                            image_url: v.image_url || "",
+                            images: v.images || (v.image_url ? [v.image_url] : []),
+                          });
+                          setEditingId(v.id);
+                          setIsCreatingType(false);
+                          setOpen(true);
+                        }}
+                        title="Modifier le véhicule"
+                      >
                         <Pencil className="h-4 w-4 text-primary" />
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => toggle(v.id)} title="Changer la disponibilité">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => toggle(v.id)}
+                        title="Changer la disponibilité"
+                      >
                         <Power className="h-4 w-4" />
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => remove(v.id)} title="Supprimer le véhicule">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => remove(v.id)}
+                        title="Supprimer le véhicule"
+                      >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>

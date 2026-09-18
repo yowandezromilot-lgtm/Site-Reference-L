@@ -32,9 +32,7 @@ function AdminRapports() {
     const prefix = `${year}-${String(i + 1).padStart(2, "0")}`;
     return state.reservations
       .filter(
-        (r) =>
-          (r.statut === "confirmed" || r.statut === "done") &&
-          r.created_at.startsWith(prefix)
+        (r) => (r.statut === "confirmed" || r.statut === "done") && r.created_at.startsWith(prefix),
       )
       .reduce((s, r) => s + r.montant, 0);
   });
@@ -48,9 +46,7 @@ function AdminRapports() {
     .map((v) => ({
       ...v,
       count: state.reservations.filter(
-        (r) =>
-          r.voiture_id === v.id &&
-          (r.statut === "confirmed" || r.statut === "done")
+        (r) => r.voiture_id === v.id && (r.statut === "confirmed" || r.statut === "done"),
       ).length,
     }))
     .sort((a, b) => b.count - a.count)
@@ -60,7 +56,7 @@ function AdminRapports() {
   const resetRapportsData = () => {
     if (
       !confirm(
-        "Voulez-vous effacer tout l'historique de démonstration des réservations pour repartir de 0 Ar ?"
+        "Voulez-vous effacer tout l'historique de démonstration des réservations pour repartir de 0 Ar ?",
       )
     )
       return;
@@ -83,7 +79,9 @@ function AdminRapports() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-2xl">Rapports & Statistiques</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">Vue d'ensemble des revenus et performances de votre parc</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Vue d'ensemble des revenus et performances de votre parc
+          </p>
         </div>
         <Button
           variant="outline"
@@ -152,7 +150,9 @@ function AdminRapports() {
                         {v.emoji}
                       </span>
                     )}
-                    <span className="font-medium">{v.marque} {v.modele}</span>
+                    <span className="font-medium">
+                      {v.marque} {v.modele}
+                    </span>
                   </span>
                   <span className="text-muted-foreground">
                     {v.count} location{v.count > 1 ? "s" : ""}

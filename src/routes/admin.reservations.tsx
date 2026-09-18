@@ -40,7 +40,9 @@ function AdminReservations() {
   const savePrice = (id: string) => {
     setState((s) => ({
       ...s,
-      reservations: s.reservations.map((r) => (r.id === id ? { ...r, montant: editPriceValue } : r)),
+      reservations: s.reservations.map((r) =>
+        r.id === id ? { ...r, montant: editPriceValue } : r,
+      ),
     }));
     setEditingPriceId(null);
     toast.success("Prix de la réservation modifié.");
@@ -100,10 +102,13 @@ function AdminReservations() {
                           />
                         ) : (
                           <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-medium shrink-0">
-                            {c?.prenom?.[0]?.toUpperCase()}{c?.nom?.[0]?.toUpperCase()}
+                            {c?.prenom?.[0]?.toUpperCase()}
+                            {c?.nom?.[0]?.toUpperCase()}
                           </div>
                         )}
-                        <span className="font-medium">{c?.prenom} {c?.nom}</span>
+                        <span className="font-medium">
+                          {c?.prenom} {c?.nom}
+                        </span>
                       </div>
                     </td>
                     <td className="px-5 py-3">
@@ -114,9 +119,15 @@ function AdminReservations() {
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">
                       <div className="flex flex-col text-xs gap-0.5">
-                        <span className="text-foreground/80"><span className="text-[10px] text-muted-foreground mr-1">Départ:</span>{r.lieu_prise}</span>
+                        <span className="text-foreground/80">
+                          <span className="text-[10px] text-muted-foreground mr-1">Départ:</span>
+                          {r.lieu_prise}
+                        </span>
                         {r.lieu_retour && r.lieu_retour !== r.lieu_prise && (
-                          <span className="text-foreground/80"><span className="text-[10px] text-muted-foreground mr-1">Retour:</span>{r.lieu_retour}</span>
+                          <span className="text-foreground/80">
+                            <span className="text-[10px] text-muted-foreground mr-1">Retour:</span>
+                            {r.lieu_retour}
+                          </span>
                         )}
                       </div>
                     </td>

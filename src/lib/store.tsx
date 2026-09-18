@@ -265,8 +265,6 @@ const initialReservations: Reservation[] = [
   },
 ];
 
-
-
 const defaultState: AppState = {
   vehicules: initialVehicules,
   clients: initialClients,
@@ -325,7 +323,7 @@ async function syncToSupabase(prev: AppState, next: AppState) {
         return pv && JSON.stringify(pv) !== JSON.stringify(nv);
       });
       for (const m of modified) {
-        const toSave: any = { ...m };
+        const toSave: Partial<Vehicule> = { ...m };
         if (toSave.images && toSave.images.length > 0) {
           toSave.image_url = JSON.stringify(toSave.images);
         } else if (!toSave.image_url) {
@@ -341,13 +339,16 @@ async function syncToSupabase(prev: AppState, next: AppState) {
       // Clients ajoutés
       const added = next.clients.filter((nc) => !prev.clients.some((pc) => pc.id === nc.id));
       if (added.length > 0) {
-        // Pour éviter les conflits d'ID, on laisse Supabase générer les clés primaires s'il le souhaite, 
+        // Pour éviter les conflits d'ID, on laisse Supabase générer les clés primaires s'il le souhaite,
         // ou on s'assure d'insérer proprement sans violer l'index.
         // Si Supabase utilise un trigger d'auto-incrémentation, on peut omettre l'id ou s'y adapter.
         for (const c of added) {
           const { data, error } = await supabase.from("clients").insert([c]).select();
           if (error) {
-            console.error("Erreur d'insertion du client sur Supabase, tentative sans ID forcé...", error);
+            console.error(
+              "Erreur d'insertion du client sur Supabase, tentative sans ID forcé...",
+              error,
+            );
             // Deuxième essai sans forcer l'id (auto-increment Supabase)
             const { id, ...clientDataWithoutId } = c;
             await supabase.from("clients").insert([clientDataWithoutId]);
@@ -438,7 +439,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
             const vehicules = storedVehicules ? JSON.parse(storedVehicules) : initialVehicules;
             const clients = storedClients ? JSON.parse(storedClients) : initialClients;
-            const reservations = storedReservations ? JSON.parse(storedReservations) : initialReservations;
+            const reservations = storedReservations
+              ? JSON.parse(storedReservations)
+              : initialReservations;
             const reviews: Review[] = storedReviews ? JSON.parse(storedReviews) : initialReviews;
             const customLieux: string[] = storedLieux ? JSON.parse(storedLieux) : [];
 
@@ -483,7 +486,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         // Si la table est vide, on l'initialise
         if (!dbVehicules || dbVehicules.length === 0) {
           const toInsert = initialVehicules.map((v) => {
-            const copy: any = { ...v };
+            const copy: Partial<Vehicule> = { ...v };
             delete copy.images;
             return copy;
           });
@@ -498,7 +501,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
 
         if (dbVehicules) {
-          dbVehicules = dbVehicules.map((v: any) => {
+          dbVehicules = dbVehicules.map((v: Partial<Vehicule>) => {
             let parsedImages: string[] = [];
             if (v.image_url && v.image_url.startsWith("[")) {
               try {
@@ -624,7 +627,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
           try {
             localStorage.setItem("rl_vehicules_v1", JSON.stringify(next.vehicules));
           } catch (e) {
-            console.warn("Impossible de sauvegarder les véhicules en localStorage (trop volumineux?)", e);
+            console.warn(
+              "Impossible de sauvegarder les véhicules en localStorage (trop volumineux?)",
+              e,
+            );
           }
         }
         if (prev.clients !== next.clients) {

@@ -58,10 +58,13 @@ function AdminClients() {
                           />
                         ) : (
                           <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-medium shrink-0">
-                            {c.prenom?.[0]?.toUpperCase()}{c.nom?.[0]?.toUpperCase()}
+                            {c.prenom?.[0]?.toUpperCase()}
+                            {c.nom?.[0]?.toUpperCase()}
                           </div>
                         )}
-                        <span className="font-medium">{c.prenom} {c.nom}</span>
+                        <span className="font-medium">
+                          {c.prenom} {c.nom}
+                        </span>
                       </div>
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">{c.telephone}</td>
@@ -99,7 +102,8 @@ function AdminClients() {
                   />
                 ) : (
                   <div className="h-16 w-16 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xl font-bold">
-                    {selected.prenom?.[0]?.toUpperCase()}{selected.nom?.[0]?.toUpperCase()}
+                    {selected.prenom?.[0]?.toUpperCase()}
+                    {selected.nom?.[0]?.toUpperCase()}
                   </div>
                 )}
                 <div>
@@ -116,7 +120,7 @@ function AdminClients() {
                 <Info label="Permis" value={selected.permis} />
                 <Info label="Inscrit le" value={selected.date_inscription} />
               </div>
-              
+
               {/* Documents */}
               {(selected.cin_photo_url || selected.cin_verso_url) && (
                 <div className="mt-4 pt-4 border-t border-border/40">
@@ -128,7 +132,11 @@ function AdminClients() {
                       <div className="space-y-1">
                         <span className="text-xs text-muted-foreground">CIN (Recto)</span>
                         <a href={selected.cin_photo_url} target="_blank" rel="noreferrer">
-                          <img src={selected.cin_photo_url} alt="CIN Recto" className="h-24 w-auto rounded border border-border object-cover hover:opacity-80 transition-opacity" />
+                          <img
+                            src={selected.cin_photo_url}
+                            alt="CIN Recto"
+                            className="h-24 w-auto rounded border border-border object-cover hover:opacity-80 transition-opacity"
+                          />
                         </a>
                       </div>
                     )}
@@ -136,7 +144,11 @@ function AdminClients() {
                       <div className="space-y-1">
                         <span className="text-xs text-muted-foreground">CIN (Verso)</span>
                         <a href={selected.cin_verso_url} target="_blank" rel="noreferrer">
-                          <img src={selected.cin_verso_url} alt="CIN Verso" className="h-24 w-auto rounded border border-border object-cover hover:opacity-80 transition-opacity" />
+                          <img
+                            src={selected.cin_verso_url}
+                            alt="CIN Verso"
+                            className="h-24 w-auto rounded border border-border object-cover hover:opacity-80 transition-opacity"
+                          />
                         </a>
                       </div>
                     )}

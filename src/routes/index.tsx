@@ -23,8 +23,32 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { useApp, formatAr, daysBetween, nextReservationId, type Vehicule, type Review, initialReviews } from "@/lib/store";
-import { CalendarDays, Users, Car, Shield, Clock, MapPin, Sparkles, ChevronLeft, ChevronRight, Phone, ArrowRight, Star, Quote, CheckCircle2, Plus } from "lucide-react";
+import {
+  useApp,
+  formatAr,
+  daysBetween,
+  nextReservationId,
+  type Vehicule,
+  type Review,
+  initialReviews,
+} from "@/lib/store";
+import {
+  CalendarDays,
+  Users,
+  Car,
+  Shield,
+  Clock,
+  MapPin,
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  Phone,
+  ArrowRight,
+  Star,
+  Quote,
+  CheckCircle2,
+  Plus,
+} from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -140,7 +164,6 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
       <div className="absolute inset-0 opacity-[0.05] bg-hero-glow" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-20 pb-24 sm:pt-28 sm:pb-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-
           {/* ── Colonne gauche : texte ── */}
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-primary bg-primary/5 backdrop-blur-sm">
@@ -153,7 +176,9 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
               de voiture dans le Nord.
             </h1>
             <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed">
-              Large flotte de véhicules récents, confortables et parfaitement entretenus pour tous vos déplacements. Service client 7j/7 — 24h/24, prise en charge rapide à l'aéroport, en ville ou directement à votre hôtel.
+              Large flotte de véhicules récents, confortables et parfaitement entretenus pour tous
+              vos déplacements. Service client 7j/7 — 24h/24, prise en charge rapide à l'aéroport,
+              en ville ou directement à votre hôtel.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3.5">
               <Button size="lg" asChild className="font-medium shadow-gold cursor-pointer">
@@ -162,7 +187,12 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
                   <ArrowRight className="h-4 w-4" />
                 </a>
               </Button>
-              <Button size="lg" variant="outline" asChild className="border-primary/40 hover:bg-primary/10 hover:text-primary transition-all cursor-pointer">
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="border-primary/40 hover:bg-primary/10 hover:text-primary transition-all cursor-pointer"
+              >
                 <a href="tel:+261322472569" className="inline-flex items-center gap-2">
                   <Phone className="h-4 w-4 text-primary" />
                   Appeler +261 32 24 725 69
@@ -182,7 +212,10 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
               </div>
               <div className="rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
                 <div className="font-display text-3xl sm:text-4xl text-gradient-gold font-bold">
-                  12 <span className="text-sm sm:text-base font-sans font-normal text-primary/80">ans</span>
+                  12{" "}
+                  <span className="text-sm sm:text-base font-sans font-normal text-primary/80">
+                    ans
+                  </span>
                 </div>
                 <div className="text-[11px] sm:text-xs uppercase tracking-[0.16em] text-muted-foreground mt-1.5 font-medium">
                   D'expérience
@@ -209,7 +242,9 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
                 </div>
                 <div>
                   <p className="text-sm font-medium leading-tight">Référence Location</p>
-                  <p className="text-xs text-muted-foreground leading-tight">En face Mitabe · Antsiranana, Madagascar</p>
+                  <p className="text-xs text-muted-foreground leading-tight">
+                    En face Mitabe · Antsiranana, Madagascar
+                  </p>
                 </div>
               </div>
               {/* Map embed */}
@@ -231,7 +266,6 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
               📍 Service disponible dans toute la région de Diana
             </p>
           </div>
-
         </div>
       </div>
     </section>
@@ -255,20 +289,22 @@ interface SearchBarProps {
 
 function SearchBar(p: SearchBarProps) {
   const { state } = useApp();
-  
+
   // Combine defaults, custom saved locations, and past reservation locations
-  const suggestions = Array.from(new Set([
-    "Aéroport Arrachart",
-    "Centre-ville Diego",
-    "Hôtel (Diego Suarez)",
-    "Ramena",
-    ...(state.customLieux ?? []),
-    ...state.reservations.map(r => r.lieu_prise),
-    ...state.reservations.map(r => r.lieu_retour)
-  ])).filter(Boolean) as string[];
+  const suggestions = Array.from(
+    new Set([
+      "Aéroport Arrachart",
+      "Centre-ville Diego",
+      "Hôtel (Diego Suarez)",
+      "Ramena",
+      ...(state.customLieux ?? []),
+      ...state.reservations.map((r) => r.lieu_prise),
+      ...state.reservations.map((r) => r.lieu_retour),
+    ]),
+  ).filter(Boolean) as string[];
 
   // Extract unique vehicle types dynamically from existing vehicles
-  const vehicleTypes = Array.from(new Set(state.vehicules.map(v => v.type))).filter(Boolean);
+  const vehicleTypes = Array.from(new Set(state.vehicules.map((v) => v.type))).filter(Boolean);
 
   return (
     <div id="parc" className="mx-auto max-w-7xl px-4 sm:px-6 -mt-12 relative z-10">
@@ -285,7 +321,9 @@ function SearchBar(p: SearchBarProps) {
               <SelectContent>
                 <SelectItem value="all">Tous les types</SelectItem>
                 {vehicleTypes.map((t) => (
-                  <SelectItem key={t} value={t}>{t}</SelectItem>
+                  <SelectItem key={t} value={t}>
+                    {t}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -439,7 +477,9 @@ function VehiculeCard({
             )}
             <Dialog open={showImage} onOpenChange={setShowImage}>
               <DialogContent className="max-w-4xl p-0 border-none bg-transparent shadow-none [&>button]:bg-black/50 [&>button]:text-white [&>button]:hover:bg-black/70 [&>button]:rounded-full">
-                <DialogTitle className="sr-only">{v.marque} {v.modele}</DialogTitle>
+                <DialogTitle className="sr-only">
+                  {v.marque} {v.modele}
+                </DialogTitle>
                 <div className="relative flex items-center justify-center">
                   <img
                     src={images[imgIdx]}
@@ -578,7 +618,8 @@ function ReservationModalInner({
 
   const validDates = depart && retour && new Date(retour) >= new Date(depart);
   const jours = validDates ? daysBetween(depart, retour) : 0;
-  const prixApplicable = horsVille && vehicule.prix_hors_ville ? vehicule.prix_hors_ville : vehicule.prix_jour;
+  const prixApplicable =
+    horsVille && vehicule.prix_hors_ville ? vehicule.prix_hors_ville : vehicule.prix_jour;
   const total = jours * prixApplicable;
 
   const submit = () => {
@@ -593,11 +634,18 @@ function ReservationModalInner({
     }
     const ref = nextReservationId(state.reservations);
     // Save any new custom locations to the persistent list
-    const defaultLieux = ["Aéroport Arrachart", "Centre-ville Diego", "Hôtel (Diego Suarez)", "Ramena"];
+    const defaultLieux = [
+      "Aéroport Arrachart",
+      "Centre-ville Diego",
+      "Hôtel (Diego Suarez)",
+      "Ramena",
+    ];
     const existingLieux = new Set([...defaultLieux, ...(state.customLieux ?? [])]);
     const newLieux: string[] = [];
-    if (lieuDepart.trim() && !existingLieux.has(lieuDepart.trim())) newLieux.push(lieuDepart.trim());
-    if (lieuRetour.trim() && !existingLieux.has(lieuRetour.trim())) newLieux.push(lieuRetour.trim());
+    if (lieuDepart.trim() && !existingLieux.has(lieuDepart.trim()))
+      newLieux.push(lieuDepart.trim());
+    if (lieuRetour.trim() && !existingLieux.has(lieuRetour.trim()))
+      newLieux.push(lieuRetour.trim());
 
     setState((s) => ({
       ...s,
@@ -700,7 +748,9 @@ function ReservationModalInner({
               />
               <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
                 Sortie <span className="font-medium text-foreground">hors ville</span>
-                <span className="ml-1.5 text-primary text-xs">({formatAr(vehicule.prix_hors_ville)}/j)</span>
+                <span className="ml-1.5 text-primary text-xs">
+                  ({formatAr(vehicule.prix_hors_ville)}/j)
+                </span>
               </span>
             </label>
           )}
@@ -770,7 +820,9 @@ function AvisClients() {
   const [showModal, setShowModal] = useState(false);
 
   const reviewsList = state.reviews && state.reviews.length > 0 ? state.reviews : initialReviews;
-  const avgRating = (reviewsList.reduce((acc, r) => acc + r.note, 0) / reviewsList.length).toFixed(1);
+  const avgRating = (reviewsList.reduce((acc, r) => acc + r.note, 0) / reviewsList.length).toFixed(
+    1,
+  );
 
   const handleOpenModal = () => {
     if (state.currentClientId === 0) {
@@ -791,7 +843,8 @@ function AvisClients() {
           </div>
           <h2 className="font-display text-3xl sm:text-4xl">Avis de nos clients</h2>
           <p className="text-muted-foreground mt-3 text-sm sm:text-base">
-            Découvrez les retours d'expérience des voyageurs et résidents qui nous font confiance à Diego Suarez.
+            Découvrez les retours d'expérience des voyageurs et résidents qui nous font confiance à
+            Diego Suarez.
           </p>
 
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
@@ -805,11 +858,7 @@ function AvisClients() {
               <span className="text-muted-foreground text-xs">· {reviewsList.length} avis</span>
             </div>
 
-            <Button
-              size="sm"
-              onClick={handleOpenModal}
-              className="rounded-full shadow-gold"
-            >
+            <Button size="sm" onClick={handleOpenModal} className="rounded-full shadow-gold">
               <Plus className="h-4 w-4 mr-1.5" />
               Donner votre avis
             </Button>
@@ -852,9 +901,7 @@ function AvisClients() {
         </div>
       </div>
 
-      {showModal && (
-        <NewReviewModal onClose={() => setShowModal(false)} />
-      )}
+      {showModal && <NewReviewModal onClose={() => setShowModal(false)} />}
     </section>
   );
 }
@@ -868,7 +915,7 @@ function NewReviewModal({ onClose }: { onClose: () => void }) {
   const [vehicule, setVehicule] = useState(
     state.vehicules.length > 0
       ? `${state.vehicules[0].marque} ${state.vehicules[0].modele}`
-      : "Hyundai Getz Phase 2"
+      : "Hyundai Getz Phase 2",
   );
   const [note, setNote] = useState(5);
   const [commentaire, setCommentaire] = useState("");
@@ -897,7 +944,8 @@ function NewReviewModal({ onClose }: { onClose: () => void }) {
       commentaire: commentaire.trim(),
     };
 
-    const currentReviews = state.reviews && state.reviews.length > 0 ? state.reviews : initialReviews;
+    const currentReviews =
+      state.reviews && state.reviews.length > 0 ? state.reviews : initialReviews;
 
     setState((s) => ({
       ...s,
@@ -921,7 +969,9 @@ function NewReviewModal({ onClose }: { onClose: () => void }) {
         <div className="grid gap-4 py-2">
           {/* Note par étoiles */}
           <div>
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground">Votre note</Label>
+            <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+              Votre note
+            </Label>
             <div className="flex items-center gap-1.5 mt-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -996,9 +1046,7 @@ function NewReviewModal({ onClose }: { onClose: () => void }) {
           <Button variant="ghost" onClick={onClose}>
             Annuler
           </Button>
-          <Button onClick={submit}>
-            Publier mon avis
-          </Button>
+          <Button onClick={submit}>Publier mon avis</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -105,7 +105,9 @@ function MesReservations() {
                         <MapPin className="h-4 w-4 shrink-0" />
                         <span className="truncate max-w-[200px] sm:max-w-none">
                           {r.lieu_prise}
-                          {r.lieu_retour && r.lieu_retour !== r.lieu_prise ? ` → ${r.lieu_retour}` : ""}
+                          {r.lieu_retour && r.lieu_retour !== r.lieu_prise
+                            ? ` → ${r.lieu_retour}`
+                            : ""}
                         </span>
                       </span>
                     </div>

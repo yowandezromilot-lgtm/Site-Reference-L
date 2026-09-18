@@ -7,9 +7,18 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { useApp, ADMIN_PASSWORD, formatAr } from "@/lib/store";
+import { useApp, ADMIN_PASSWORD, formatAr, type Reservation } from "@/lib/store";
 import { supabase } from "@/lib/supabase";
-import { LayoutDashboard, Car, CalendarCheck, Users, BarChart3, LogOut, Lock, Bell } from "lucide-react";
+import {
+  LayoutDashboard,
+  Car,
+  CalendarCheck,
+  Users,
+  BarChart3,
+  LogOut,
+  Lock,
+  Bell,
+} from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -29,7 +38,7 @@ function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   // Nombre de réservations en attente (badge rouge)
-  const newCount = state.reservations.filter(r => r.statut === "pending").length;
+  const newCount = state.reservations.filter((r) => r.statut === "pending").length;
 
   // --- Notification en temps réel ---
   const prevResIds = useRef(new Set(state.reservations.map((r) => r.id)));
@@ -53,22 +62,23 @@ function AdminLayout() {
         const clientName = client ? `${client.prenom} ${client.nom}` : "Un client";
         const vehiculeName = vehicule ? `${vehicule.marque} ${vehicule.modele}` : "un véhicule";
 
-        toast.info(
-          `🔔 Nouvelle réservation reçue !`,
-          {
-            description: `${clientName} a réservé ${vehiculeName} — ${formatAr(r.montant)}`,
-            duration: 8000,
-            action: {
-              label: "Voir",
-              onClick: () => {
-                window.location.href = "/admin/reservations";
-              },
+        toast.info(`🔔 Nouvelle réservation reçue !`, {
+          description: `${clientName} a réservé ${vehiculeName} — ${formatAr(r.montant)}`,
+          duration: 8000,
+          action: {
+            label: "Voir",
+            onClick: () => {
+              window.location.href = "/admin/reservations";
             },
-          }
-        );
+          },
+        });
 
         // Notification navigateur si autorisée
-        if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+        if (
+          typeof window !== "undefined" &&
+          "Notification" in window &&
+          Notification.permission === "granted"
+        ) {
           new Notification("🔔 Nouvelle réservation — Référence Location", {
             body: `${clientName} a réservé ${vehiculeName}`,
             icon: "/logo.png",
@@ -78,7 +88,7 @@ function AdminLayout() {
     }
 
     prevResIds.current = currentIds;
-  }, [state.reservations, state.isAdmin, state.hydrated]);
+  }, [state.reservations, state.isAdmin, state.hydrated, state.clients, state.vehicules]);
 
   // ── 2. Supabase Realtime (si connecté) ──────────────────────────────
   useEffect(() => {
@@ -90,32 +100,36 @@ function AdminLayout() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "reservations" },
         (payload) => {
-          const newRes = payload.new as any;
+          const newRes = payload.new as unknown as Reservation;
           // La mise à jour du state local déclenchera l'effet ci-dessus
           setState((s) => {
             if (s.reservations.some((r) => r.id === newRes.id)) return s;
             return { ...s, reservations: [...s.reservations, newRes] };
           });
-        }
+        },
       )
       .subscribe();
 
     // Demander la permission de notification navigateur
-    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "default") {
+    if (
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      Notification.permission === "default"
+    ) {
       Notification.requestPermission();
     }
 
     return () => {
       supabase?.removeChannel(channel);
     };
-  }, [state.isAdmin]);
+  }, [state.isAdmin, setState]);
 
   // Réinitialiser le badge quand l'admin visite l'onglet Réservations
   useEffect(() => {
     if (pathname === "/admin/reservations" && newCount > 0) {
       setState((s) => ({ ...s, newReservationsCount: 0 }));
     }
-  }, [pathname]);
+  }, [pathname, newCount, setState]);
 
   const tabs = [
     { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, badge: 0 },
@@ -161,7 +175,6 @@ function AdminLayout() {
                 <Button type="submit" className="mt-2">
                   Se connecter
                 </Button>
-
               </form>
             </CardContent>
           </Card>

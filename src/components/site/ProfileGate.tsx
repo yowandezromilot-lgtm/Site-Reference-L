@@ -72,7 +72,7 @@ export function ProfileGate({ children }: { children: ReactNode }) {
       setDone(false);
     }
     setReady(true);
-  }, [state.hydrated, state.clients]);
+  }, [state.hydrated, state.clients, setState]);
 
   // Reset form fields when opening the add account gate
   useEffect(() => {
@@ -198,8 +198,7 @@ export function ProfileGate({ children }: { children: ReactNode }) {
 
   // If the user explicitly requested to add an account (from the switcher dropdown),
   // we must show the gate, regardless of admin or client connection status.
-  const bypassGate =
-    !state.showAddAccountGate && (state.isAdmin || isLocalAdminRoute || done);
+  const bypassGate = !state.showAddAccountGate && (state.isAdmin || isLocalAdminRoute || done);
 
   if (bypassGate) return <>{children}</>;
 

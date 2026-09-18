@@ -18,9 +18,7 @@ function AdminDashboard() {
   const month = new Date().toISOString().slice(0, 7);
   const monthRevenue = state.reservations
     .filter(
-      (r) =>
-        (r.statut === "confirmed" || r.statut === "done") &&
-        r.created_at.startsWith(month)
+      (r) => (r.statut === "confirmed" || r.statut === "done") && r.created_at.startsWith(month),
     )
     .reduce((s, r) => s + r.montant, 0);
 
@@ -164,10 +162,13 @@ function AdminDashboard() {
                             />
                           ) : (
                             <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-medium shrink-0">
-                              {c?.prenom?.[0]?.toUpperCase()}{c?.nom?.[0]?.toUpperCase()}
+                              {c?.prenom?.[0]?.toUpperCase()}
+                              {c?.nom?.[0]?.toUpperCase()}
                             </div>
                           )}
-                          <span className="font-medium">{c?.prenom} {c?.nom}</span>
+                          <span className="font-medium">
+                            {c?.prenom} {c?.nom}
+                          </span>
                         </div>
                       </td>
                       <td className="px-5 py-3">
@@ -178,9 +179,17 @@ function AdminDashboard() {
                       </td>
                       <td className="px-5 py-3 text-muted-foreground">
                         <div className="flex flex-col text-xs gap-0.5">
-                          <span className="text-foreground/80"><span className="text-[10px] text-muted-foreground mr-1">Départ:</span>{r.lieu_prise}</span>
+                          <span className="text-foreground/80">
+                            <span className="text-[10px] text-muted-foreground mr-1">Départ:</span>
+                            {r.lieu_prise}
+                          </span>
                           {r.lieu_retour && r.lieu_retour !== r.lieu_prise && (
-                            <span className="text-foreground/80"><span className="text-[10px] text-muted-foreground mr-1">Retour:</span>{r.lieu_retour}</span>
+                            <span className="text-foreground/80">
+                              <span className="text-[10px] text-muted-foreground mr-1">
+                                Retour:
+                              </span>
+                              {r.lieu_retour}
+                            </span>
                           )}
                         </div>
                       </td>

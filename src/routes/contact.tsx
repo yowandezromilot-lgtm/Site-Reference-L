@@ -41,7 +41,7 @@ function Contact() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify({
           Nom: form.nom,
@@ -140,7 +140,11 @@ function Contact() {
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                   />
                 </div>
-                 <Button type="submit" className="justify-self-end cursor-pointer" disabled={sending}>
+                <Button
+                  type="submit"
+                  className="justify-self-end cursor-pointer"
+                  disabled={sending}
+                >
                   {sending ? "Envoi en cours..." : "Envoyer le message"}
                 </Button>
               </form>

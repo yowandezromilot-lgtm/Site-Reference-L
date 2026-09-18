@@ -1,7 +1,7 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useState, useRef, useEffect, type ReactNode } from "react";
 import { toast } from "sonner";
-import { useApp } from "@/lib/store";
+import { useApp, type Reservation } from "@/lib/store";
 import { supabase } from "@/lib/supabase";
 import { Phone, Mail, MapPin, ChevronDown, UserCircle, Plus, LogOut, Check } from "lucide-react";
 
@@ -21,9 +21,7 @@ function AccountSwitcher() {
   const ref = useRef<HTMLDivElement>(null);
 
   const currentClient = state.clients.find((c) => c.id === state.currentClientId);
-  const connectedClients = state.clients.filter((c) =>
-    state.connectedClientIds.includes(c.id),
-  );
+  const connectedClients = state.clients.filter((c) => state.connectedClientIds.includes(c.id));
 
   // Close on outside click
   useEffect(() => {
@@ -84,9 +82,16 @@ function AccountSwitcher() {
       >
         <div className="h-6 w-6 rounded-full bg-gradient-to-br from-primary/80 to-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground uppercase shrink-0 overflow-hidden">
           {currentClient.photo_url ? (
-            <img src={currentClient.photo_url} alt="Profil" className="h-full w-full object-cover" />
+            <img
+              src={currentClient.photo_url}
+              alt="Profil"
+              className="h-full w-full object-cover"
+            />
           ) : (
-            <>{currentClient.prenom[0]}{currentClient.nom[0]}</>
+            <>
+              {currentClient.prenom[0]}
+              {currentClient.nom[0]}
+            </>
           )}
         </div>
         <span className="hidden sm:inline font-medium max-w-[100px] truncate">
@@ -97,7 +102,9 @@ function AccountSwitcher() {
             {connectedClients.length}
           </span>
         )}
-        <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown
+          className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
+        />
       </button>
 
       {open && (
@@ -119,11 +126,16 @@ function AccountSwitcher() {
                   {c.photo_url ? (
                     <img src={c.photo_url} alt="Profil" className="h-full w-full object-cover" />
                   ) : (
-                    <>{c.prenom[0]}{c.nom[0]}</>
+                    <>
+                      {c.prenom[0]}
+                      {c.nom[0]}
+                    </>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{c.prenom} {c.nom}</div>
+                  <div className="text-sm font-medium truncate">
+                    {c.prenom} {c.nom}
+                  </div>
                   <div className="text-xs text-muted-foreground truncate">{c.telephone}</div>
                 </div>
                 {c.id === state.currentClientId && (
@@ -168,23 +180,23 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   // --- Client Notifications Effect ---
   const prevClientReservations = useRef<Record<string, string>>({});
-  
+
   useEffect(() => {
     if (!currentClient) return;
-    
+
     const clientRes = state.reservations.filter((r) => r.client_id === currentClient.id);
     const currentStatuses: Record<string, string> = {};
-    
+
     let hasNewConfirmation = false;
 
-    clientRes.forEach(r => {
+    clientRes.forEach((r) => {
       currentStatuses[r.id] = r.statut;
       const oldStatut = prevClientReservations.current[r.id];
       // Note: we only trigger if we previously KNEW it was pending and now it's confirmed
       if (oldStatut === "pending" && r.statut === "confirmed") {
-        const vehicule = state.vehicules.find(v => v.id === r.voiture_id);
+        const vehicule = state.vehicules.find((v) => v.id === r.voiture_id);
         const nomVehicule = vehicule ? `${vehicule.marque} ${vehicule.modele}` : "votre véhicule";
-        
+
         toast.success(`🎉 Bonne nouvelle, ${currentClient.prenom} !`, {
           description: `Votre réservation pour ${nomVehicule} a été confirmée.`,
           duration: 10000,
@@ -192,24 +204,33 @@ export function AppShell({ children }: { children: ReactNode }) {
             label: "Voir",
             onClick: () => {
               window.location.href = "/mes-reservations";
-            }
-          }
+            },
+          },
         });
 
-        if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+        if (
+          typeof window !== "undefined" &&
+          "Notification" in window &&
+          Notification.permission === "granted"
+        ) {
           new Notification("🎉 Réservation confirmée ! — Référence Location", {
             body: `Votre réservation pour ${nomVehicule} a été confirmée par l'administrateur.`,
             icon: "/logo.png",
           });
         }
-        
+
         hasNewConfirmation = true;
       }
     });
 
     // Optionally ask for notification permissions if there are changes
-    if (hasNewConfirmation && typeof window !== "undefined" && "Notification" in window && Notification.permission === "default") {
-       Notification.requestPermission();
+    if (
+      hasNewConfirmation &&
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      Notification.permission === "default"
+    ) {
+      Notification.requestPermission();
     }
 
     // Always update to current statuses to prevent duplicate toasts
@@ -224,21 +245,26 @@ export function AppShell({ children }: { children: ReactNode }) {
       .channel("client-reservations")
       .on(
         "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "reservations", filter: `client_id=eq.${currentClient.id}` },
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "reservations",
+          filter: `client_id=eq.${currentClient.id}`,
+        },
         (payload) => {
-          const updatedRes = payload.new as any;
+          const updatedRes = payload.new as unknown as Reservation;
           setState((s) => ({
             ...s,
-            reservations: s.reservations.map(r => r.id === updatedRes.id ? updatedRes : r)
+            reservations: s.reservations.map((r) => (r.id === updatedRes.id ? updatedRes : r)),
           }));
-        }
+        },
       )
       .subscribe();
 
     return () => {
       supabase?.removeChannel(channel);
     };
-  }, [currentClient]);
+  }, [currentClient, setState]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -338,8 +364,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
             <p className="mt-4 text-sm text-muted-foreground max-w-xs">
               Location de véhicules premium à Diego Suarez.{" "}
-              {Array.from(new Set(state.vehicules.map((v) => v.marque + " " + v.modele))).join(", ")}
-              {" "}— 7j/7, 24h/24.
+              {Array.from(new Set(state.vehicules.map((v) => v.marque + " " + v.modele))).join(
+                ", ",
+              )}{" "}
+              — 7j/7, 24h/24.
             </p>
           </div>
           <div>
