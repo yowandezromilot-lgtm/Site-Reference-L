@@ -4,10 +4,11 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
@@ -128,6 +129,25 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function PageTransition() {
+  const location = useLocation();
+  const [key, setKey] = useState(location.pathname);
+  const prevPath = useRef(location.pathname);
+
+  useEffect(() => {
+    if (prevPath.current !== location.pathname) {
+      prevPath.current = location.pathname;
+      setKey(location.pathname);
+    }
+  }, [location.pathname]);
+
+  return (
+    <div key={key} className="page-transition-enter">
+      <Outlet />
+    </div>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
@@ -137,7 +157,7 @@ function RootComponent() {
         <Toaster richColors position="top-right" />
         <ProfileGate>
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
+          <PageTransition />
         </ProfileGate>
       </AppProvider>
     </QueryClientProvider>

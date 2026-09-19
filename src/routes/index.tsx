@@ -166,20 +166,20 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* ── Colonne gauche : texte ── */}
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-primary bg-primary/5 backdrop-blur-sm">
+            <div className="animate-fade-up delay-100 inline-flex items-center gap-2 rounded-full border border-primary/30 px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-primary bg-primary/5 backdrop-blur-sm">
               Diego Suarez · Antsiranana
             </div>
-            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl mt-6 leading-[1.05]">
+            <h1 className="animate-fade-up delay-200 font-display text-5xl sm:text-6xl lg:text-7xl mt-6 leading-[1.05]">
               La <span className="text-gradient-gold">référence</span> de la location{" "}
               <br className="hidden sm:block" />
               de voiture dans le Nord.
             </h1>
-            <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed">
+            <p className="animate-fade-up delay-300 mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed">
               Large flotte de véhicules récents, confortables et parfaitement entretenus pour tous
               vos déplacements. Service client 7j/7 — 24h/24, prise en charge rapide à l'aéroport,
               en ville ou directement à votre hôtel.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3.5">
+            <div className="animate-fade-up delay-400 mt-8 flex flex-wrap items-center gap-3.5">
               <Button size="lg" asChild className="font-medium shadow-gold cursor-pointer">
                 <a href="#parc" className="inline-flex items-center gap-2">
                   Réserver maintenant
@@ -201,7 +201,7 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
 
             {/* Cartes stats */}
             <div className="mt-14 sm:mt-16 grid grid-cols-3 gap-3.5 sm:gap-6">
-              <div className="rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
+              <div className="animate-fade-up delay-500 rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
                 <div className="font-display text-3xl sm:text-4xl text-gradient-gold font-bold">
                   {vehiculesCount > 0 ? `${vehiculesCount}+` : "5+"}
                 </div>
@@ -209,7 +209,7 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
                   Véhicules au parc
                 </div>
               </div>
-              <div className="rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
+              <div className="animate-fade-up delay-600 rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
                 <div className="font-display text-3xl sm:text-4xl text-gradient-gold font-bold">
                   12{" "}
                   <span className="text-sm sm:text-base font-sans font-normal text-primary/80">
@@ -220,7 +220,7 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
                   D'expérience
                 </div>
               </div>
-              <div className="rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
+              <div className="animate-fade-up delay-700 rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
                 <div className="font-display text-3xl sm:text-4xl text-gradient-gold font-bold">
                   24/7
                 </div>
@@ -231,8 +231,9 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
             </div>
           </div>
 
+
           {/* ── Colonne droite / Mobile : carte Google Maps ── */}
-          <div className="flex flex-col gap-3 mt-6 lg:mt-0">
+          <div className="animate-slide-right delay-300 flex flex-col gap-3 mt-6 lg:mt-0">
             <div className="rounded-2xl border border-primary/25 bg-card/40 backdrop-blur-sm overflow-hidden shadow-gold">
               {/* En-tête carte */}
               <div className="flex items-center gap-2.5 px-4 py-3 border-b border-primary/15 bg-card/60">
