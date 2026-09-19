@@ -263,3 +263,28 @@
 .page-transition-exit {
   animation: page-exit 0.25s ease forwards;
 }
+
+/* ── Animation de fond de site (Animated Background) ── */
+@keyframes float-slow-1 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(80px, -50px) scale(1.18); }
+}
+
+@keyframes float-slow-2 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(-70px, 60px) scale(1.25); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.32; }
+}
+
+.anim-float-1 {
+  animation: float-slow-1 20s ease-in-out infinite, pulse-glow 9s ease-in-out infinite;
+}
+
+.anim-float-2 {
+  animation: float-slow-2 26s ease-in-out infinite, pulse-glow 12s ease-in-out infinite;
+}
+

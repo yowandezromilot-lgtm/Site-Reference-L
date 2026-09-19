@@ -168,33 +168,13 @@ function Accueil() {
 function Hero({ vehiculesCount }: { vehiculesCount: number }) {
   return (
     <section className="relative overflow-hidden bg-gradient-hero">
-      {/* Halo lumineux d'arrière-plan avec texture 3D */}
-      <div className="absolute inset-0 opacity-[0.08] bg-hero-glow pointer-events-none" />
+      <div className="absolute inset-0 opacity-[0.05] bg-hero-glow pointer-events-none" />
 
-      {/* Ambiance vidéo 3D en arrière-plan discret (Hero backdrop) */}
-      <div className="absolute inset-0 overflow-hidden opacity-25 pointer-events-none mix-blend-luminosity">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover scale-105 filter blur-[1px]"
-        >
-          <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-sports-car-driving-on-a-road-at-night-41549-large.mp4"
-            type="video/mp4"
-          />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/90" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/80" />
-      </div>
-
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-20 sm:pt-24 sm:pb-28">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-20 pb-24 sm:pt-28 sm:pb-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* ── Colonne gauche : texte ── */}
           <div>
-            <div className="anim-fade-up anim-d1 inline-flex items-center gap-2 rounded-full border border-primary/30 px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-primary bg-primary/10 backdrop-blur-md">
-              <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />
+            <div className="anim-fade-up anim-d1 inline-flex items-center gap-2 rounded-full border border-primary/30 px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-primary bg-primary/5 backdrop-blur-sm">
               Diego Suarez · Antsiranana
             </div>
             <h1 className="anim-fade-up anim-d2 font-display text-5xl sm:text-6xl lg:text-7xl mt-6 leading-[1.05]">
@@ -228,7 +208,7 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
             </div>
 
             {/* Cartes stats */}
-            <div className="mt-12 sm:mt-14 grid grid-cols-3 gap-3.5 sm:gap-6">
+            <div className="mt-14 sm:mt-16 grid grid-cols-3 gap-3.5 sm:gap-6">
               <div className="anim-fade-up anim-d5 rounded-xl border border-primary/20 bg-card/40 backdrop-blur-sm p-4 sm:p-5 transition-all hover:border-primary/40 shadow-card">
                 <div className="font-display text-3xl sm:text-4xl text-gradient-gold font-bold">
                   {vehiculesCount > 0 ? `${vehiculesCount}+` : "5+"}
@@ -259,204 +239,43 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
             </div>
           </div>
 
-          {/* ── Colonne droite : Carte Vitrine 3D & Maps ── */}
-          <div className="anim-slide-right anim-d3 mt-6 lg:mt-0">
-            <HeroVisualShowcase />
+          {/* ── Colonne droite / Mobile : carte Google Maps ── */}
+          <div className="anim-slide-right anim-d3 flex flex-col gap-3 mt-6 lg:mt-0">
+            <div className="rounded-2xl border border-primary/25 bg-card/40 backdrop-blur-sm overflow-hidden shadow-gold">
+              {/* En-tête carte */}
+              <div className="flex items-center gap-2.5 px-4 py-3 border-b border-primary/15 bg-card/60">
+                <div className="grid place-items-center h-7 w-7 rounded-full bg-primary/15 text-primary shrink-0">
+                  <MapPin className="h-3.5 w-3.5" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium leading-tight">Référence Location</p>
+                  <p className="text-xs text-muted-foreground leading-tight">
+                    En face Mitabe · Antsiranana, Madagascar
+                  </p>
+                </div>
+              </div>
+              {/* Map embed */}
+              <div className="relative w-full h-[260px] sm:h-[340px]">
+                <iframe
+                  title="Référence Location — Mitabe, Diego Suarez"
+                  src="https://maps.google.com/maps?ll=-12.27570,49.29065&t=m&z=19&output=embed"
+                  className="absolute inset-0 w-full h-full border-0 grayscale-[30%] saturate-[120%]"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+                {/* Overlay doré léger */}
+                <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-primary/10 rounded-b-2xl" />
+              </div>
+            </div>
+            {/* Badge sous la carte */}
+            <p className="text-center text-xs text-muted-foreground tracking-wide">
+              📍 Service disponible dans toute la région de Diana
+            </p>
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-/**
- * Composant de vitrine vidéo 3D interactive avec effet d'inclinaison 3D
- * et onglets de bascule entre l'animation 3D et Google Maps.
- */
-function HeroVisualShowcase() {
-  const [activeTab, setActiveTab] = useState<"video" | "map">("video");
-  const [isPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
-  const [currentVidIndex, setCurrentVidIndex] = useState(0);
-
-  // URLs de vidéos haute qualité 3D / véhicules
-  const videos = [
-    {
-      title: "SUV 4x4 Tout-Terrain — Diego",
-      src: "https://assets.mixkit.co/videos/preview/mixkit-sports-car-driving-on-a-road-at-night-41549-large.mp4",
-      tag: "4x4 & SUV Premium",
-    },
-    {
-      title: "Véhicules de Luxe & Confort",
-      src: "https://assets.mixkit.co/videos/preview/mixkit-car-headlights-in-the-dark-41547-large.mp4",
-      tag: "Berline & Citadine",
-    },
-  ];
-
-  // Effet d'inclinaison 3D au survol de la carte
-  const [tiltStyle, setTiltStyle] = useState<React.CSSProperties>({});
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateX = ((y - centerY) / centerY) * -8;
-    const rotateY = ((x - centerX) / centerX) * 8;
-
-    setTiltStyle({
-      transform: `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.01, 1.01, 1.01)`,
-      transition: "transform 0.1s ease-out",
-    });
-  };
-
-  const handleMouseLeave = () => {
-    setTiltStyle({
-      transform: "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
-      transition: "transform 0.5s ease-out",
-    });
-  };
-
-  return (
-    <div className="flex flex-col gap-3.5 max-w-lg mx-auto lg:max-w-none">
-      {/* Barre de navigation d'onglets haut de carte */}
-      <div className="flex items-center justify-between p-1 bg-card/60 backdrop-blur-md rounded-xl border border-primary/20">
-        <button
-          onClick={() => setActiveTab("video")}
-          className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-            activeTab === "video"
-              ? "bg-primary text-primary-foreground shadow-gold font-semibold"
-              : "text-muted-foreground hover:text-foreground hover:bg-primary/10"
-          }`}
-        >
-          <Film className="h-3.5 w-3.5" />
-          <span>Animation 3D Vidéo</span>
-          <span className="hidden sm:inline-block px-1.5 py-0.5 rounded-full text-[9px] bg-primary-foreground/20 uppercase font-mono">
-            4K
-          </span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("map")}
-          className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-            activeTab === "map"
-              ? "bg-primary text-primary-foreground shadow-gold font-semibold"
-              : "text-muted-foreground hover:text-foreground hover:bg-primary/10"
-          }`}
-        >
-          <MapPin className="h-3.5 w-3.5" />
-          <span>Localisation Maps</span>
-        </button>
-      </div>
-
-      {/* Cadre de présentation 3D interactif */}
-      <div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={tiltStyle}
-        className="relative rounded-2xl border border-primary/30 bg-card/50 backdrop-blur-md overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.6)] group transition-all"
-      >
-        {/* Border glow effet neon doré */}
-        <div className="absolute inset-0 ring-1 ring-primary/20 rounded-2xl pointer-events-none group-hover:ring-primary/50 transition-all z-20" />
-
-        {activeTab === "video" ? (
-          <div className="relative w-full h-[300px] sm:h-[360px] bg-black/80 overflow-hidden">
-            {/* Lecteur vidéo 3D */}
-            <video
-              key={videos[currentVidIndex].src}
-              autoPlay={isPlaying}
-              loop
-              muted={isMuted}
-              playsInline
-              className="w-full h-full object-cover transform scale-105 transition-all duration-700 group-hover:scale-110"
-            >
-              <source src={videos[currentVidIndex].src} type="video/mp4" />
-            </video>
-
-            {/* Vignette dégradé sombre et reflets */}
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40 pointer-events-none" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(15,14,12,0.6)_100%)] pointer-events-none" />
-
-            {/* Badge supérieur 3D */}
-            <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-background/80 backdrop-blur-md border border-primary/30 text-[11px] font-medium text-primary shadow-lg">
-                <span className="h-2 w-2 rounded-full bg-primary animate-ping" />
-                <span>{videos[currentVidIndex].tag}</span>
-              </div>
-
-              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-background/80 backdrop-blur-md border border-white/10 text-[10px] text-muted-foreground">
-                <Sparkles className="h-3 w-3 text-primary" />
-                <span>Rendu 3D Cinéma</span>
-              </div>
-            </div>
-
-            {/* Contrôles overlay bas de vidéo */}
-            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between z-10">
-              {/* Titre vidéo */}
-              <div className="bg-background/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-primary/20 text-xs text-foreground font-medium flex items-center gap-2">
-                <Compass className="h-3.5 w-3.5 text-primary" />
-                <span className="truncate max-w-[160px] sm:max-w-[220px]">
-                  {videos[currentVidIndex].title}
-                </span>
-              </div>
-
-              {/* Boutons d'action : Mute & Next */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setIsMuted(!isMuted)}
-                  className="p-2 rounded-lg bg-background/80 hover:bg-primary hover:text-primary-foreground border border-primary/30 text-primary transition-all backdrop-blur-md cursor-pointer"
-                  title={isMuted ? "Activer le son" : "Couper le son"}
-                >
-                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                </button>
-
-                <button
-                  onClick={() =>
-                    setCurrentVidIndex((prev) => (prev + 1) % videos.length)
-                  }
-                  className="px-2.5 py-1.5 rounded-lg bg-primary/90 hover:bg-primary text-primary-foreground text-xs font-medium transition-all shadow-gold cursor-pointer flex items-center gap-1"
-                >
-                  <Eye className="h-3.5 w-3.5" />
-                  <span>Changer vue</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* Vue Carte Google Maps */
-          <div className="relative w-full h-[300px] sm:h-[360px]">
-            <div className="flex items-center gap-2.5 px-4 py-3 border-b border-primary/15 bg-card/80 backdrop-blur-md">
-              <div className="grid place-items-center h-7 w-7 rounded-full bg-primary/15 text-primary shrink-0">
-                <MapPin className="h-3.5 w-3.5" />
-              </div>
-              <div>
-                <p className="text-sm font-medium leading-tight">Référence Location — Agence</p>
-                <p className="text-xs text-muted-foreground leading-tight">
-                  En face Mitabe · Antsiranana, Madagascar
-                </p>
-              </div>
-            </div>
-
-            <iframe
-              title="Référence Location — Mitabe, Diego Suarez"
-              src="https://maps.google.com/maps?ll=-12.27570,49.29065&t=m&z=19&output=embed"
-              className="w-full h-[250px] sm:h-[310px] border-0 grayscale-[20%] saturate-[130%]"
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Description pied de composant */}
-      <p className="text-center text-xs text-muted-foreground tracking-wide flex items-center justify-center gap-1.5">
-        <Sparkles className="h-3 w-3 text-primary inline" />
-        <span>Flotte 4x4 et Berlines de luxe disponibles à Diego Suarez</span>
-      </p>
-    </div>
   );
 }
 

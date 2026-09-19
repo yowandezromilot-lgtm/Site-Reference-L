@@ -267,141 +267,222 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [currentClient, setState]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src="/logo.png"
-              alt="Logo Référence Location"
-              className="h-12 w-12 rounded-md object-contain"
-            />
-            <span className="hidden sm:flex flex-col leading-tight">
-              <span className="font-display text-base">Référence Location</span>
-              <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                Diego Suarez · Madagascar
-              </span>
-            </span>
-          </Link>
-
-          <nav className="hidden md:flex items-center gap-1">
-            {nav.map((n) => {
-              const active = pathname === n.to;
-              return (
-                <Link
-                  key={n.to}
-                  to={n.to}
-                  className={`px-3 py-2 text-sm rounded-md transition-colors ${active ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  {n.label}
-                </Link>
-              );
-            })}
-            <Link
-              to="/admin"
-              className={`ml-2 px-3 py-2 text-xs uppercase tracking-[0.15em] rounded-md border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground transition-colors ${pathname.startsWith("/admin") ? "bg-primary text-primary-foreground" : ""}`}
-            >
-              {state.isAdmin ? "Espace Admin ●" : "Admin"}
-            </Link>
-          </nav>
-
-          {/* Right side: account switcher — masqué dans l'espace admin */}
-          <div className="flex items-center gap-2">
-            {!pathname.startsWith("/admin") && currentClient && <AccountSwitcher />}
-            {!pathname.startsWith("/admin") && !currentClient && (
-              <button
-                onClick={() => {
-                  setState((s) => ({ ...s, showAddAccountGate: true }));
-                  navigate({ to: "/" });
-                }}
-                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-              >
-                <UserCircle className="h-5 w-5" />
-                <span className="hidden sm:inline">Connexion</span>
-              </button>
-            )}
-            <a
-              href="tel:+261322472569"
-              className="md:hidden text-primary text-sm"
-              aria-label="Appeler le service client"
-              title="Appeler le service client"
-            >
-              <Phone className="h-5 w-5" />
-            </a>
-          </div>
-        </div>
-
-        {/* Mobile nav */}
-        <nav className="md:hidden flex items-center gap-1 overflow-x-auto px-3 pb-2 border-t border-border/40">
-          {[...nav, { to: "/admin", label: "Admin" }].map((n) => {
-            const active =
-              pathname === n.to || (n.to === "/admin" && pathname.startsWith("/admin"));
-            return (
-              <Link
-                key={n.to}
-                to={n.to}
-                className={`whitespace-nowrap px-3 py-1.5 text-xs rounded-full ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
-              >
-                {n.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </header>
-
-      <main className="flex-1">{children}</main>
-
-      <footer className="border-t border-border/60 mt-16 bg-sidebar">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 grid gap-8 md:grid-cols-4">
-          <div>
-            <div className="flex items-center gap-3">
+    <div className="min-h-screen flex flex-col bg-background text-foreground relative overflow-x-hidden">
+      <AnimatedSiteBackground />
+      <div className="relative z-10 flex-1 flex flex-col">
+        <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+            <Link to="/" className="flex items-center gap-3">
               <img
                 src="/logo.png"
                 alt="Logo Référence Location"
                 className="h-12 w-12 rounded-md object-contain"
               />
-              <div className="font-display text-lg">Référence Location</div>
+              <span className="hidden sm:flex flex-col leading-tight">
+                <span className="font-display text-base">Référence Location</span>
+                <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Diego Suarez · Madagascar
+                </span>
+              </span>
+            </Link>
+
+            <nav className="hidden md:flex items-center gap-1">
+              {nav.map((n) => {
+                const active = pathname === n.to;
+                return (
+                  <Link
+                    key={n.to}
+                    to={n.to}
+                    className={`px-3 py-2 text-sm rounded-md transition-colors ${active ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    {n.label}
+                  </Link>
+                );
+              })}
+              <Link
+                to="/admin"
+                className={`ml-2 px-3 py-2 text-xs uppercase tracking-[0.15em] rounded-md border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground transition-colors ${pathname.startsWith("/admin") ? "bg-primary text-primary-foreground" : ""}`}
+              >
+                {state.isAdmin ? "Espace Admin ●" : "Admin"}
+              </Link>
+            </nav>
+
+            {/* Right side: account switcher — masqué dans l'espace admin */}
+            <div className="flex items-center gap-2">
+              {!pathname.startsWith("/admin") && currentClient && <AccountSwitcher />}
+              {!pathname.startsWith("/admin") && !currentClient && (
+                <button
+                  onClick={() => {
+                    setState((s) => ({ ...s, showAddAccountGate: true }));
+                    navigate({ to: "/" });
+                  }}
+                  className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                >
+                  <UserCircle className="h-5 w-5" />
+                  <span className="hidden sm:inline">Connexion</span>
+                </button>
+              )}
+              <a
+                href="tel:+261322472569"
+                className="md:hidden text-primary text-sm"
+                aria-label="Appeler le service client"
+                title="Appeler le service client"
+              >
+                <Phone className="h-5 w-5" />
+              </a>
             </div>
-            <p className="mt-4 text-sm text-muted-foreground max-w-xs">
-              Location de véhicules premium à Diego Suarez.{" "}
-              {Array.from(new Set(state.vehicules.map((v) => v.marque + " " + v.modele))).join(
-                ", ",
-              )}{" "}
-              — 7j/7, 24h/24.
-            </p>
           </div>
-          <div>
-            <div className="text-xs uppercase tracking-[0.18em] text-primary mb-3">Adresse</div>
-            <div className="text-sm text-muted-foreground flex items-start gap-2">
-              <MapPin className="h-4 w-4 mt-0.5 text-primary" />
-              <span>En face Mitabe · Antsiranana, Madagascar</span>
+
+          {/* Mobile nav */}
+          <nav className="md:hidden flex items-center gap-1 overflow-x-auto px-3 pb-2 border-t border-border/40">
+            {[...nav, { to: "/admin", label: "Admin" }].map((n) => {
+              const active =
+                pathname === n.to || (n.to === "/admin" && pathname.startsWith("/admin"));
+              return (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  className={`whitespace-nowrap px-3 py-1.5 text-xs rounded-full ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+                >
+                  {n.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </header>
+
+        <main className="flex-1">{children}</main>
+
+        <footer className="border-t border-border/60 bg-card/40 backdrop-blur-sm mt-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 grid gap-8 sm:grid-cols-2 md:grid-cols-4">
+            <div>
+              <div className="font-display text-base mb-2 text-gradient-gold font-bold">
+                Référence Location
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Le premier choix pour la location de voiture à Diego Suarez (Antsiranana). Service client
+                — 7j/7, 24h/24.
+              </p>
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-[0.18em] text-primary mb-3">Adresse</div>
+              <div className="text-sm text-muted-foreground flex items-start gap-2">
+                <MapPin className="h-4 w-4 mt-0.5 text-primary" />
+                <span>En face Mitabe · Antsiranana, Madagascar</span>
+              </div>
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-[0.18em] text-primary mb-3">Téléphone</div>
+              <a
+                href="tel:+261322472569"
+                className="text-sm flex items-center gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <Phone className="h-4 w-4 text-primary" />
+                +261 32 24 725 69
+              </a>
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-[0.18em] text-primary mb-3">Email</div>
+              <a
+                href="mailto:referencelocation4@gmail.com"
+                className="text-sm flex items-center gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <Mail className="h-4 w-4 text-primary" />
+                referencelocation4@gmail.com
+              </a>
             </div>
           </div>
-          <div>
-            <div className="text-xs uppercase tracking-[0.18em] text-primary mb-3">Téléphone</div>
-            <a
-              href="tel:+261322472569"
-              className="text-sm flex items-center gap-2 text-muted-foreground hover:text-foreground"
-            >
-              <Phone className="h-4 w-4 text-primary" />
-              +261 32 24 725 69
-            </a>
+          <div className="border-t border-border/40 py-4 text-center text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Référence Location de Voiture — Tous droits réservés
           </div>
-          <div>
-            <div className="text-xs uppercase tracking-[0.18em] text-primary mb-3">Email</div>
-            <a
-              href="mailto:referencelocation4@gmail.com"
-              className="text-sm flex items-center gap-2 text-muted-foreground hover:text-foreground"
-            >
-              <Mail className="h-4 w-4 text-primary" />
-              referencelocation4@gmail.com
-            </a>
-          </div>
-        </div>
-        <div className="border-t border-border/40 py-4 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Référence Location de Voiture — Tous droits réservés
-        </div>
-      </footer>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Composant d'arrière-plan animé global pour le site.
+ * Génère des orbes lumineux dorés et des micro-particules dorées en mouvement continu.
+ */
+function AnimatedSiteBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener("resize", handleResize);
+
+    // Création des particules dorées
+    const particleCount = Math.min(Math.floor(width / 35), 45);
+    const particles = Array.from({ length: particleCount }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 2 + 0.8,
+      speedY: -(Math.random() * 0.4 + 0.15),
+      speedX: (Math.random() - 0.5) * 0.3,
+      alpha: Math.random() * 0.5 + 0.15,
+      pulseSpeed: Math.random() * 0.02 + 0.005,
+    }));
+
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      particles.forEach((p) => {
+        p.y += p.speedY;
+        p.x += p.speedX;
+
+        // Réinitialisation si hors écran
+        if (p.y < 0) {
+          p.y = height + 10;
+          p.x = Math.random() * width;
+        }
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+
+        p.alpha += Math.sin(Date.now() * p.pulseSpeed) * 0.005;
+        const clampedAlpha = Math.max(0.1, Math.min(0.65, p.alpha));
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(201, 169, 97, ${clampedAlpha})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = "rgba(201, 169, 97, 0.4)";
+        ctx.fill();
+      });
+
+      animId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      cancelAnimationFrame(animId);
+    };
+  }, []);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {/* Orbes lumineux animés en arrière-plan */}
+      <div className="absolute -top-32 -left-32 w-[550px] h-[550px] rounded-full bg-primary/10 blur-[130px] anim-float-1" />
+      <div className="absolute top-1/2 -right-32 w-[600px] h-[600px] rounded-full bg-primary/8 blur-[150px] anim-float-2" />
+      <div className="absolute -bottom-32 left-1/3 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[140px] anim-float-1" />
+
+      {/* Canvas de micro-particules dorées */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-60" />
     </div>
   );
 }
