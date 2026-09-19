@@ -106,41 +106,51 @@ function Accueil() {
         setLieuRetour={setLieuRetour}
       />
 
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">Notre parc</p>
-            <h2 className="font-display text-3xl sm:text-4xl mt-2">Véhicules disponibles</h2>
-          </div>
-          <div className="text-sm text-muted-foreground">
-            {filtered.length} véhicule{filtered.length > 1 ? "s" : ""}
-          </div>
-        </div>
+      {/* ── Section véhicules avec fond 3D ── */}
+      <div className="vehicles-3d-bg" id="parc">
+        {/* Orbes lumineux CSS 3D */}
+        <div className="orb orb-1" />
+        <div className="orb orb-2" />
+        <div className="orb orb-3" />
+        {/* Grille perspective */}
+        <div className="perspective-grid" />
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((v) => (
-            <VehiculeCard
-              key={v.id}
-              v={v}
-              dateDepart={dateDepart}
-              dateRetour={dateRetour}
-              onReserve={() => {
-                if (state.currentClientId === 0) {
-                  toast.error("Veuillez vous connecter pour réserver un véhicule.");
-                  setState((s) => ({ ...s, showAddAccountGate: true }));
-                } else {
-                  setSelected(v);
-                }
-              }}
-            />
-          ))}
-          {filtered.length === 0 && (
-            <div className="col-span-full text-center py-16 text-muted-foreground">
-              Aucun véhicule ne correspond à vos critères.
+        <section className="relative mx-auto max-w-7xl px-4 sm:px-6 py-12">
+          <div className="flex items-end justify-between mb-8">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-primary">Notre parc</p>
+              <h2 className="font-display text-3xl sm:text-4xl mt-2">Véhicules disponibles</h2>
             </div>
-          )}
-        </div>
-      </section>
+            <div className="text-sm text-muted-foreground">
+              {filtered.length} véhicule{filtered.length > 1 ? "s" : ""}
+            </div>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((v) => (
+              <VehiculeCard
+                key={v.id}
+                v={v}
+                dateDepart={dateDepart}
+                dateRetour={dateRetour}
+                onReserve={() => {
+                  if (state.currentClientId === 0) {
+                    toast.error("Veuillez vous connecter pour réserver un véhicule.");
+                    setState((s) => ({ ...s, showAddAccountGate: true }));
+                  } else {
+                    setSelected(v);
+                  }
+                }}
+              />
+            ))}
+            {filtered.length === 0 && (
+              <div className="col-span-full text-center py-16 text-muted-foreground">
+                Aucun véhicule ne correspond à vos critères.
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
 
       <AvisClients />
 
