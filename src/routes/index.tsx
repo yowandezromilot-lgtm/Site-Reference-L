@@ -914,15 +914,23 @@ function Trust() {
     },
   ];
   return (
-    <section className="border-t border-border/60 bg-sidebar/40">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 grid gap-8 md:grid-cols-4">
+    <section className="relative border-t border-border/40 bg-card/20 backdrop-blur-sm overflow-hidden">
+      {/* Bande et halo supérieur */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-3/4 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-32 w-1/2 bg-primary/5 blur-[100px] pointer-events-none" />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24 grid gap-8 md:grid-cols-4">
         {items.map((it) => (
-          <div key={it.title}>
-            <span className="grid h-10 w-10 place-items-center rounded-md border border-primary/30 text-primary">
+          <div key={it.title} className="group flex flex-col items-start">
+            <span className="grid h-12 w-12 place-items-center rounded-xl border border-primary/20 bg-primary/5 text-primary group-hover:bg-primary/15 group-hover:scale-110 group-hover:border-primary/40 transition-all duration-300 shadow-gold">
               <it.icon className="h-5 w-5" />
             </span>
-            <div className="font-display text-lg mt-4">{it.title}</div>
-            <p className="text-sm text-muted-foreground mt-1.5">{it.text}</p>
+            <div className="font-display text-lg mt-5 text-foreground group-hover:text-primary transition-colors">
+              {it.title}
+            </div>
+            <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+              {it.text}
+            </p>
           </div>
         ))}
       </div>
@@ -949,32 +957,38 @@ function AvisClients() {
   };
 
   return (
-    <section className="border-t border-border/60 bg-card/20 py-16 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 px-3.5 py-1 text-xs uppercase tracking-[0.2em] text-primary bg-primary/5 backdrop-blur-sm mb-3">
+    <section className="relative py-20 sm:py-28 overflow-hidden border-t border-border/40">
+      <div className="absolute inset-0 bg-background/50 backdrop-blur-3xl z-0" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-full max-w-3xl bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-primary bg-primary/5 backdrop-blur-sm mb-4">
             <Star className="h-3.5 w-3.5 fill-primary text-primary" />
             Témoignages
           </div>
-          <h2 className="font-display text-3xl sm:text-4xl">Avis de nos clients</h2>
-          <p className="text-muted-foreground mt-3 text-sm sm:text-base">
+          <h2 className="font-display text-4xl sm:text-5xl mb-4">
+            Avis de <span className="text-gradient-gold">nos clients</span>
+          </h2>
+          <p className="text-muted-foreground mt-4 text-sm sm:text-base leading-relaxed">
             Découvrez les retours d'expérience des voyageurs et résidents qui nous font confiance à
             Diego Suarez.
           </p>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-            <div className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm">
-              <div className="flex text-primary">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <div className="inline-flex items-center justify-center gap-3 rounded-2xl border border-primary/20 bg-card/60 backdrop-blur-sm px-5 py-2 shadow-gold">
+              <div className="flex text-primary gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-primary" />
+                  <Star key={i} className="h-4 w-4 sm:h-5 sm:w-5 fill-primary" />
                 ))}
               </div>
-              <span className="font-semibold text-foreground">{avgRating} / 5</span>
-              <span className="text-muted-foreground text-xs">· {reviewsList.length} avis</span>
+              <div className="w-px h-5 bg-border/60" />
+              <span className="font-display font-bold text-lg text-foreground">{avgRating} / 5</span>
+              <span className="text-muted-foreground text-sm font-medium">({reviewsList.length} avis)</span>
             </div>
 
-            <Button size="sm" onClick={handleOpenModal} className="rounded-full shadow-gold">
-              <Plus className="h-4 w-4 mr-1.5" />
+            <Button onClick={handleOpenModal} className="rounded-full shadow-gold hover:brightness-110 transition-all h-11 px-6">
+              <Plus className="h-4 w-4 mr-2" />
               Donner votre avis
             </Button>
           </div>
@@ -982,36 +996,40 @@ function AvisClients() {
 
         <div className="grid gap-6 md:grid-cols-3">
           {reviewsList.map((rev) => (
-            <Card
+            <div
               key={rev.id}
-              className="border-border/60 bg-card/40 backdrop-blur-sm shadow-card hover:border-primary/40 transition-all flex flex-col justify-between"
+              className="group relative flex flex-col justify-between rounded-2xl border border-border/50 bg-card/40 backdrop-blur-sm p-6 sm:p-8 hover:border-primary/50 hover:bg-card/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-card"
             >
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex text-primary">
+              {/* Ligne dorée animée en haut */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 h-0.5 w-0 bg-gradient-to-r from-transparent via-primary/60 to-transparent group-hover:w-3/4 transition-all duration-500 rounded-b-full" />
+              
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex text-primary gap-0.5">
                     {[...Array(rev.note)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-primary" />
+                      <Star key={i} className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-primary" />
                     ))}
                   </div>
-                  <Quote className="h-6 w-6 text-primary/30" />
+                  <Quote className="h-8 w-8 text-primary/10 group-hover:text-primary/25 transition-colors" />
                 </div>
                 <p className="text-sm text-foreground/90 italic leading-relaxed">
                   "{rev.commentaire}"
                 </p>
-              </CardContent>
-              <div className="px-6 pb-6 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
+              </div>
+              
+              <div className="mt-8 pt-5 border-t border-border/40 flex items-center justify-between text-xs">
                 <div>
-                  <div className="font-semibold text-foreground flex items-center gap-1.5">
+                  <div className="font-semibold text-foreground flex items-center gap-1.5 text-sm">
                     {rev.nom}
                     <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
                   </div>
-                  <div className="text-muted-foreground text-[11px] mt-0.5">
+                  <div className="text-muted-foreground text-[11px] mt-1">
                     {rev.ville} · {rev.vehicule}
                   </div>
                 </div>
-                <span className="text-muted-foreground font-mono text-[11px]">{rev.date}</span>
+                <span className="text-muted-foreground font-mono text-[10px] bg-muted/40 px-2.5 py-1 rounded-md">{rev.date}</span>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       </div>
