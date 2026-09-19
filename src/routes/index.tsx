@@ -90,71 +90,99 @@ function Accueil() {
   return (
     <AppShell>
       <Toaster richColors position="top-right" />
-      <Hero vehiculesCount={state.vehicules.length} />
-      <SearchBar
-        type={type}
-        setType={setType}
-        places={places}
-        setPlaces={setPlaces}
-        dateDepart={dateDepart}
-        setDateDepart={setDateDepart}
-        dateRetour={dateRetour}
-        setDateRetour={setDateRetour}
-        lieuDepart={lieuDepart}
-        setLieuDepart={setLieuDepart}
-        lieuRetour={lieuRetour}
-        setLieuRetour={setLieuRetour}
-      />
+      
+      {/* ── Conteneur Scroll Snapping ── */}
+      <div className="h-[calc(100vh-64px)] w-full overflow-y-auto snap-y snap-mandatory scroll-smooth relative no-scrollbar">
+        
+        {/* ── Vidéo de fond globale ── */}
+        <div className="fixed inset-0 z-[-1]">
+          {/* Voile sombre pour la lisibilité */}
+          <div className="absolute inset-0 bg-[oklch(0.12_0.005_60)]/70 z-10 backdrop-blur-[2px]" />
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover opacity-60"
+            src="https://cdn.pixabay.com/video/2020/05/24/40141-425114141_large.mp4"
+          />
+        </div>
 
-      {/* ── Section véhicules avec fond 3D ── */}
-      <div className="vehicles-3d-bg" id="parc">
-        {/* Orbes lumineux CSS 3D */}
-        <div className="orb orb-1" />
-        <div className="orb orb-2" />
-        <div className="orb orb-3" />
-        {/* Grille perspective */}
-        <div className="perspective-grid" />
-
-        <section className="relative mx-auto max-w-7xl px-4 sm:px-6 py-12">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-primary">Notre parc</p>
-              <h2 className="font-display text-3xl sm:text-4xl mt-2">Véhicules disponibles</h2>
-            </div>
-            <div className="text-sm text-muted-foreground">
-              {filtered.length} véhicule{filtered.length > 1 ? "s" : ""}
-            </div>
+        {/* ── Diapositive 1 : Hero & Recherche ── */}
+        <div className="snap-start min-h-screen flex flex-col justify-center relative pt-10 pb-20">
+          <Hero vehiculesCount={state.vehicules.length} />
+          <div className="mt-8 z-20 w-full max-w-7xl mx-auto px-4">
+            <SearchBar
+              type={type}
+              setType={setType}
+              places={places}
+              setPlaces={setPlaces}
+              dateDepart={dateDepart}
+              setDateDepart={setDateDepart}
+              dateRetour={dateRetour}
+              setDateRetour={setDateRetour}
+              lieuDepart={lieuDepart}
+              setLieuDepart={setLieuDepart}
+              lieuRetour={lieuRetour}
+              setLieuRetour={setLieuRetour}
+            />
           </div>
+        </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((v) => (
-              <VehiculeCard
-                key={v.id}
-                v={v}
-                dateDepart={dateDepart}
-                dateRetour={dateRetour}
-                onReserve={() => {
-                  if (state.currentClientId === 0) {
-                    toast.error("Veuillez vous connecter pour réserver un véhicule.");
-                    setState((s) => ({ ...s, showAddAccountGate: true }));
-                  } else {
-                    setSelected(v);
-                  }
-                }}
-              />
-            ))}
-            {filtered.length === 0 && (
-              <div className="col-span-full text-center py-16 text-muted-foreground">
-                Aucun véhicule ne correspond à vos critères.
+        {/* ── Diapositive 2 : Véhicules ── */}
+        <div className="snap-start min-h-screen relative pt-20 pb-12 flex flex-col" id="parc">
+          <section className="relative mx-auto max-w-7xl px-4 sm:px-6 w-full flex-1 flex flex-col">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-primary drop-shadow-md">Notre parc</p>
+                <h2 className="font-display text-3xl sm:text-4xl mt-2 drop-shadow-lg">Véhicules disponibles</h2>
               </div>
-            )}
+              <div className="text-sm text-muted-foreground drop-shadow-md">
+                {filtered.length} véhicule{filtered.length > 1 ? "s" : ""}
+              </div>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((v) => (
+                <VehiculeCard
+                  key={v.id}
+                  v={v}
+                  dateDepart={dateDepart}
+                  dateRetour={dateRetour}
+                  onReserve={() => {
+                    if (state.currentClientId === 0) {
+                      toast.error("Veuillez vous connecter pour réserver un véhicule.");
+                      setState((s) => ({ ...s, showAddAccountGate: true }));
+                    } else {
+                      setSelected(v);
+                    }
+                  }}
+                />
+              ))}
+              {filtered.length === 0 && (
+                <div className="col-span-full text-center py-16 text-muted-foreground">
+                  Aucun véhicule ne correspond à vos critères.
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+
+        {/* ── Diapositive 3 : Avis Clients ── */}
+        <div className="snap-start min-h-screen flex items-center justify-center relative py-12">
+          <div className="w-full">
+            <AvisClients />
           </div>
-        </section>
+        </div>
+
+        {/* ── Diapositive 4 : Confiance / Footer ── */}
+        <div className="snap-start min-h-[50vh] flex flex-col justify-end relative pb-12">
+          <div className="w-full">
+            <Trust />
+          </div>
+        </div>
+
       </div>
-
-      <AvisClients />
-
-      <Trust />
 
       <ReservationModal
         vehicule={selected}
@@ -168,136 +196,10 @@ function Accueil() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   CANVAS 3D — fond particules dorées animées
-───────────────────────────────────────────── */
-function ParticleCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animId: number;
-    let W = 0, H = 0;
-
-    // Particle definition
-    type P = {
-      x: number; y: number; z: number;
-      vx: number; vy: number; vz: number;
-      r: number; opacity: number;
-    };
-    const GOLD = ["201,169,97", "180,140,60", "230,195,120", "210,175,100"];
-    const COUNT = 90;
-    const particles: P[] = [];
-
-    function resize() {
-      W = canvas!.offsetWidth;
-      H = canvas!.offsetHeight;
-      canvas!.width = W;
-      canvas!.height = H;
-    }
-
-    function init() {
-      particles.length = 0;
-      for (let i = 0; i < COUNT; i++) {
-        particles.push({
-          x: Math.random() * W,
-          y: Math.random() * H,
-          z: Math.random() * 2 + 0.2,
-          vx: (Math.random() - 0.5) * 0.35,
-          vy: (Math.random() - 0.5) * 0.35,
-          vz: (Math.random() - 0.5) * 0.004,
-          r: Math.random() * 1.8 + 0.6,
-          opacity: Math.random() * 0.5 + 0.2,
-        });
-      }
-    }
-
-    function draw() {
-      ctx!.clearRect(0, 0, W, H);
-
-      // Draw connection lines
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const a = particles[i], b = particles[j];
-          const dist = Math.hypot(a.x - b.x, a.y - b.y);
-          if (dist < 130) {
-            const alpha = (1 - dist / 130) * 0.12 * Math.min(a.z, b.z);
-            ctx!.beginPath();
-            ctx!.strokeStyle = `rgba(201,169,97,${alpha})`;
-            ctx!.lineWidth = 0.6;
-            ctx!.moveTo(a.x, a.y);
-            ctx!.lineTo(b.x, b.y);
-            ctx!.stroke();
-          }
-        }
-      }
-
-      // Draw particles
-      for (const p of particles) {
-        const scale = p.z;
-        const radius = p.r * scale;
-        const color = GOLD[Math.floor(p.r * 2) % GOLD.length];
-        const grd = ctx!.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius * 4);
-        grd.addColorStop(0, `rgba(${color},${p.opacity * scale})`);
-        grd.addColorStop(0.5, `rgba(${color},${p.opacity * scale * 0.4})`);
-        grd.addColorStop(1, `rgba(${color},0)`);
-        ctx!.beginPath();
-        ctx!.fillStyle = grd;
-        ctx!.arc(p.x, p.y, radius * 4, 0, Math.PI * 2);
-        ctx!.fill();
-
-        // Core dot
-        ctx!.beginPath();
-        ctx!.fillStyle = `rgba(${color},${p.opacity * scale * 1.5})`;
-        ctx!.arc(p.x, p.y, radius, 0, Math.PI * 2);
-        ctx!.fill();
-
-        // Update
-        p.x += p.vx * p.z;
-        p.y += p.vy * p.z;
-        p.z += p.vz;
-        if (p.z > 2.2 || p.z < 0.1) p.vz *= -1;
-        if (p.x < 0) p.x = W;
-        if (p.x > W) p.x = 0;
-        if (p.y < 0) p.y = H;
-        if (p.y > H) p.y = 0;
-      }
-
-      animId = requestAnimationFrame(draw);
-    }
-
-    resize();
-    init();
-    draw();
-
-    const ro = new ResizeObserver(() => { resize(); init(); });
-    ro.observe(canvas!);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      ro.disconnect();
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
-      style={{ opacity: 0.75 }}
-    />
-  );
-}
-
 function Hero({ vehiculesCount }: { vehiculesCount: number }) {
   return (
-    <section className="relative overflow-hidden bg-gradient-hero">
-      <ParticleCanvas />
-      <div className="absolute inset-0 opacity-[0.05] bg-hero-glow" />
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-20 pb-24 sm:pt-28 sm:pb-32">
+    <section className="relative overflow-hidden w-full h-full flex flex-col justify-center">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* ── Colonne gauche : texte ── */}
           <div>

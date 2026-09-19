@@ -264,84 +264,13 @@
   animation: page-exit 0.25s ease forwards;
 }
 
-/* ══════════════════════════════════════════════
-   FOND 3D — Section Véhicules
-══════════════════════════════════════════════ */
-
-/* Wrapper principal */
-.vehicles-3d-bg {
-  position: relative;
-  overflow: hidden;
-  background:
-    radial-gradient(ellipse at 10% 50%, oklch(0.22 0.02 70 / 0.5) 0%, transparent 55%),
-    radial-gradient(ellipse at 90% 20%, oklch(0.20 0.015 80 / 0.4) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 100%, oklch(0.18 0.01 60 / 0.6) 0%, transparent 60%),
-    oklch(0.14 0.004 60);
+/* Hide scrollbar for snap container */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* Grille perspective 3D */
-.perspective-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(oklch(0.78 0.1 85 / 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(0.78 0.1 85 / 0.04) 1px, transparent 1px);
-  background-size: 60px 60px;
-  transform: perspective(600px) rotateX(12deg) scaleY(1.4);
-  transform-origin: center top;
-  mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 70%, transparent 100%);
-  pointer-events: none;
-}
 
-/* Orbes lumineux flottants */
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(70px);
-  pointer-events: none;
-  will-change: transform;
-}
-
-.orb-1 {
-  width: 420px;
-  height: 420px;
-  background: radial-gradient(circle, oklch(0.78 0.1 85 / 0.18) 0%, transparent 70%);
-  top: -80px;
-  left: -100px;
-  animation: orb-float-1 12s ease-in-out infinite;
-}
-
-.orb-2 {
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(circle, oklch(0.70 0.08 80 / 0.14) 0%, transparent 70%);
-  top: 40%;
-  right: -80px;
-  animation: orb-float-2 16s ease-in-out infinite;
-}
-
-.orb-3 {
-  width: 260px;
-  height: 260px;
-  background: radial-gradient(circle, oklch(0.82 0.11 90 / 0.12) 0%, transparent 70%);
-  bottom: -60px;
-  left: 40%;
-  animation: orb-float-3 10s ease-in-out infinite;
-}
-
-@keyframes orb-float-1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%       { transform: translate(40px, 30px) scale(1.08); }
-  66%       { transform: translate(-20px, 50px) scale(0.95); }
-}
-
-@keyframes orb-float-2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  40%       { transform: translate(-50px, -30px) scale(1.1); }
-  70%       { transform: translate(20px, 40px) scale(0.92); }
-}
-
-@keyframes orb-float-3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50%       { transform: translate(30px, -40px) scale(1.15); }
-}
