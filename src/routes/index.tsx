@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState } from "react";
 import { AppShell } from "@/components/site/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -90,99 +90,61 @@ function Accueil() {
   return (
     <AppShell>
       <Toaster richColors position="top-right" />
-      
-      {/* ── Conteneur Scroll Snapping ── */}
-      <div className="h-[calc(100vh-64px)] w-full overflow-y-auto snap-y snap-mandatory scroll-smooth relative no-scrollbar">
-        
-        {/* ── Vidéo de fond globale ── */}
-        <div className="fixed inset-0 z-[-1]">
-          {/* Voile sombre pour la lisibilité */}
-          <div className="absolute inset-0 bg-[oklch(0.12_0.005_60)]/70 z-10 backdrop-blur-[2px]" />
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover opacity-60"
-            src="https://cdn.pixabay.com/video/2020/05/24/40141-425114141_large.mp4"
-          />
+      <Hero vehiculesCount={state.vehicules.length} />
+      <SearchBar
+        type={type}
+        setType={setType}
+        places={places}
+        setPlaces={setPlaces}
+        dateDepart={dateDepart}
+        setDateDepart={setDateDepart}
+        dateRetour={dateRetour}
+        setDateRetour={setDateRetour}
+        lieuDepart={lieuDepart}
+        setLieuDepart={setLieuDepart}
+        lieuRetour={lieuRetour}
+        setLieuRetour={setLieuRetour}
+      />
+
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+        <div className="flex items-end justify-between mb-8">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-primary">Notre parc</p>
+            <h2 className="font-display text-3xl sm:text-4xl mt-2">Véhicules disponibles</h2>
+          </div>
+          <div className="text-sm text-muted-foreground">
+            {filtered.length} véhicule{filtered.length > 1 ? "s" : ""}
+          </div>
         </div>
 
-        {/* ── Diapositive 1 : Hero & Recherche ── */}
-        <div className="snap-start min-h-screen flex flex-col justify-center relative pt-10 pb-20">
-          <Hero vehiculesCount={state.vehicules.length} />
-          <div className="mt-8 z-20 w-full max-w-7xl mx-auto px-4">
-            <SearchBar
-              type={type}
-              setType={setType}
-              places={places}
-              setPlaces={setPlaces}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((v) => (
+            <VehiculeCard
+              key={v.id}
+              v={v}
               dateDepart={dateDepart}
-              setDateDepart={setDateDepart}
               dateRetour={dateRetour}
-              setDateRetour={setDateRetour}
-              lieuDepart={lieuDepart}
-              setLieuDepart={setLieuDepart}
-              lieuRetour={lieuRetour}
-              setLieuRetour={setLieuRetour}
+              onReserve={() => {
+                if (state.currentClientId === 0) {
+                  toast.error("Veuillez vous connecter pour réserver un véhicule.");
+                  setState((s) => ({ ...s, showAddAccountGate: true }));
+                } else {
+                  setSelected(v);
+                }
+              }}
             />
-          </div>
-        </div>
-
-        {/* ── Diapositive 2 : Véhicules ── */}
-        <div className="snap-start min-h-screen relative pt-20 pb-12 flex flex-col" id="parc">
-          <section className="relative mx-auto max-w-7xl px-4 sm:px-6 w-full flex-1 flex flex-col">
-            <div className="flex items-end justify-between mb-8">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-primary drop-shadow-md">Notre parc</p>
-                <h2 className="font-display text-3xl sm:text-4xl mt-2 drop-shadow-lg">Véhicules disponibles</h2>
-              </div>
-              <div className="text-sm text-muted-foreground drop-shadow-md">
-                {filtered.length} véhicule{filtered.length > 1 ? "s" : ""}
-              </div>
+          ))}
+          {filtered.length === 0 && (
+            <div className="col-span-full text-center py-16 text-muted-foreground">
+              Aucun véhicule ne correspond à vos critères.
             </div>
-
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((v) => (
-                <VehiculeCard
-                  key={v.id}
-                  v={v}
-                  dateDepart={dateDepart}
-                  dateRetour={dateRetour}
-                  onReserve={() => {
-                    if (state.currentClientId === 0) {
-                      toast.error("Veuillez vous connecter pour réserver un véhicule.");
-                      setState((s) => ({ ...s, showAddAccountGate: true }));
-                    } else {
-                      setSelected(v);
-                    }
-                  }}
-                />
-              ))}
-              {filtered.length === 0 && (
-                <div className="col-span-full text-center py-16 text-muted-foreground">
-                  Aucun véhicule ne correspond à vos critères.
-                </div>
-              )}
-            </div>
-          </section>
+          )}
         </div>
+      </section>
 
-        {/* ── Diapositive 3 : Avis Clients ── */}
-        <div className="snap-start min-h-screen flex items-center justify-center relative py-12">
-          <div className="w-full">
-            <AvisClients />
-          </div>
-        </div>
+      <AvisClients />
 
-        {/* ── Diapositive 4 : Confiance / Footer ── */}
-        <div className="snap-start min-h-[50vh] flex flex-col justify-end relative pb-12">
-          <div className="w-full">
-            <Trust />
-          </div>
-        </div>
-
-      </div>
+      <Trust />
 
       <ReservationModal
         vehicule={selected}
@@ -198,8 +160,9 @@ function Accueil() {
 
 function Hero({ vehiculesCount }: { vehiculesCount: number }) {
   return (
-    <section className="relative overflow-hidden w-full h-full flex flex-col justify-center">
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+    <section className="relative overflow-hidden bg-gradient-hero">
+      <div className="absolute inset-0 opacity-[0.05] bg-hero-glow" />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-20 pb-24 sm:pt-28 sm:pb-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* ── Colonne gauche : texte ── */}
           <div>

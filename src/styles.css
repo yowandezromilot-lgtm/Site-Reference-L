@@ -263,14 +263,3 @@
 .page-transition-exit {
   animation: page-exit 0.25s ease forwards;
 }
-
-/* Hide scrollbar for snap container */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-
