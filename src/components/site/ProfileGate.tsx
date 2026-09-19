@@ -207,12 +207,10 @@ export function ProfileGate({ children }: { children: ReactNode }) {
     );
   }
 
-  const isLocalAdminRoute =
-    typeof window !== "undefined" && window.location.pathname.startsWith("/admin");
-
-  // If the user explicitly requested to add an account (from the switcher dropdown),
-  // we must show the gate, regardless of admin or client connection status.
-  const bypassGate = !state.showAddAccountGate && (state.isAdmin || isLocalAdminRoute || done);
+  // Le site est public par défaut (page d'accueil, voitures, etc.).
+  // On n'affiche cette interface de connexion QUE si l'utilisateur demande à se connecter
+  // ou s'il essaie de réserver un véhicule sans être connecté.
+  const bypassGate = !state.showAddAccountGate;
 
   if (bypassGate) return <>{children}</>;
 
