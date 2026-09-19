@@ -167,7 +167,6 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
           {/* ── Colonne gauche : texte ── */}
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 px-3.5 py-1.5 text-xs uppercase tracking-[0.2em] text-primary bg-primary/5 backdrop-blur-sm">
-              <Sparkles className="h-3.5 w-3.5" />
               Diego Suarez · Antsiranana
             </div>
             <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl mt-6 leading-[1.05]">
