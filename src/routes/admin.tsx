@@ -1,7 +1,6 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { AppShell } from "@/components/site/AppShell";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -18,6 +17,7 @@ import {
   LogOut,
   Lock,
   Bell,
+  ShieldAlert,
 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
@@ -139,21 +139,48 @@ function AdminLayout() {
     { to: "/admin/rapports", label: "Rapports", icon: BarChart3, badge: 0 },
   ] as const;
 
+  /* ── Page de connexion admin ── */
   if (!state.isAdmin) {
     return (
       <AppShell>
         <section className="mx-auto max-w-md px-4 sm:px-6 py-20">
-          <Card className="border-primary/30" style={{ boxShadow: "var(--shadow-gold)" }}>
-            <CardContent className="p-8">
-              <div className="grid h-12 w-12 place-items-center rounded-md border border-primary/40 text-primary mx-auto">
-                <Lock className="h-5 w-5" />
+          {/* Carte glassmorphism */}
+          <div className="relative rounded-2xl border border-primary/20 bg-card/70 backdrop-blur-xl overflow-hidden shadow-[0_30px_80px_-20px_oklch(0_0_0/0.6)]">
+            {/* Bande dorée supérieure */}
+            <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-primary to-transparent opacity-90" />
+
+            {/* Halo d'ambiance doré en haut */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 h-32 w-64 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+
+            <div className="relative p-8 sm:p-10">
+              {/* Icône de verrou */}
+              <div className="mx-auto mb-6 grid h-14 w-14 place-items-center rounded-2xl border border-primary/30 bg-primary/10 text-primary shadow-[0_0_30px_-5px_oklch(0.78_0.1_85/0.4)]">
+                <Lock className="h-6 w-6" />
               </div>
-              <h1 className="font-display text-2xl text-center mt-4">Espace Administrateur</h1>
-              <p className="text-sm text-muted-foreground text-center mt-2">
-                Accès réservé à l'équipe Référence Location.
+
+              {/* Eyebrow */}
+              <div className="flex items-center justify-center gap-2 text-xs uppercase tracking-[0.25em] text-primary mb-3">
+                <span className="w-4 h-px bg-primary inline-block" />
+                Accès restreint
+                <span className="w-4 h-px bg-primary inline-block" />
+              </div>
+
+              <h1 className="font-display text-3xl text-center">Espace Administrateur</h1>
+              <p className="text-sm text-muted-foreground text-center mt-2 leading-relaxed">
+                Accès réservé à l'équipe <span className="text-primary">Référence Location</span>.
               </p>
+
+              {/* Alerte sécurité */}
+              <div className="mt-6 flex items-start gap-2.5 rounded-xl border border-destructive/20 bg-destructive/5 p-3.5">
+                <ShieldAlert className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Ne partagez jamais votre mot de passe administrateur. Cet espace est réservé à
+                  l'équipe interne.
+                </p>
+              </div>
+
               <form
-                className="mt-6 grid gap-3"
+                className="mt-6 grid gap-4"
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (pwd === ADMIN_PASSWORD) {
@@ -164,84 +191,129 @@ function AdminLayout() {
                   }
                 }}
               >
-                <Label>Mot de passe</Label>
-                <Input
-                  type="password"
-                  value={pwd}
-                  onChange={(e) => setPwd(e.target.value)}
-                  autoFocus
-                />
-                {err && <div className="text-xs text-destructive">{err}</div>}
-                <Button type="submit" className="mt-2">
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+                    Mot de passe
+                  </Label>
+                  <Input
+                    id="admin-password"
+                    type="password"
+                    value={pwd}
+                    onChange={(e) => setPwd(e.target.value)}
+                    autoFocus
+                    className="border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors"
+                    placeholder="••••••••••"
+                  />
+                </div>
+
+                {err && (
+                  <div className="text-xs text-destructive bg-destructive/10 border border-destructive/20 rounded-lg px-3 py-2">
+                    {err}
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  className="w-full mt-2 cursor-pointer shadow-gold hover:brightness-110 transition-all"
+                >
+                  <Lock className="h-4 w-4 mr-2" />
                   Se connecter
                 </Button>
               </form>
-            </CardContent>
-          </Card>
+            </div>
+
+            {/* Bande dorée inférieure */}
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+          </div>
         </section>
       </AppShell>
     );
   }
 
+  /* ── Layout admin connecté ── */
   return (
     <AppShell>
       <Toaster richColors position="top-right" />
       <section className="mx-auto max-w-7xl px-4 sm:px-6 py-10">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+
+        {/* Header admin */}
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">Administration</p>
-            <h1 className="font-display text-4xl mt-2">Espace Admin</h1>
+            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-primary mb-3">
+              <span className="w-6 h-px bg-primary inline-block" />
+              Administration
+              <span className="w-6 h-px bg-primary inline-block" />
+            </div>
+            <h1 className="font-display text-4xl sm:text-5xl">
+              Espace <span className="text-gradient-gold">Admin</span>
+            </h1>
+            <div className="h-0.5 mt-3 w-16 bg-gradient-to-r from-primary to-transparent rounded-full" />
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className="relative"
-              onClick={() => {
-                window.location.href = "/admin/reservations";
-              }}
+
+          {/* Actions header */}
+          <div className="flex items-center gap-2">
+            {/* Bouton notifications */}
+            <button
+              onClick={() => { window.location.href = "/admin/reservations"; }}
               title="Notifications"
+              className="relative inline-flex items-center justify-center h-9 w-9 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/10 transition-all duration-200 text-muted-foreground hover:text-primary"
             >
               <Bell className="h-4 w-4" />
               {newCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground shadow-sm">
+                <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground shadow-sm animate-pulse">
                   {newCount > 9 ? "9+" : newCount}
                 </span>
               )}
-            </Button>
+            </button>
+
+            {/* Bouton déconnexion */}
             <Button
               variant="outline"
               size="sm"
+              className="gap-2 border-border/60 hover:border-destructive/40 hover:text-destructive hover:bg-destructive/10 transition-all"
               onClick={() => setState((s) => ({ ...s, isAdmin: false }))}
             >
-              <LogOut className="h-4 w-4 mr-2" />
+              <LogOut className="h-4 w-4" />
               Se déconnecter
             </Button>
           </div>
         </div>
 
-        <div className="mt-8 border-b border-border/60 flex items-center gap-1 overflow-x-auto">
-          {tabs.map((t) => {
-            const active = pathname === t.to;
-            return (
-              <Link
-                key={t.to}
-                to={t.to}
-                className={`relative inline-flex items-center gap-2 px-4 py-3 text-sm border-b-2 whitespace-nowrap transition-colors ${active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"}`}
-              >
-                <t.icon className="h-4 w-4" />
-                {t.label}
-                {t.badge > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold grid place-items-center px-1 shadow-md">
-                    {t.badge > 9 ? "9+" : t.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
+        {/* Navigation onglets */}
+        <div className="relative mb-8">
+          {/* Ligne de fond */}
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-border/60" />
+          <div className="flex items-center gap-1 overflow-x-auto">
+            {tabs.map((t) => {
+              const active = pathname === t.to;
+              return (
+                <Link
+                  key={t.to}
+                  to={t.to}
+                  className={`
+                    relative inline-flex items-center gap-2 px-4 py-3 text-sm font-medium
+                    whitespace-nowrap transition-all duration-200 border-b-2 rounded-t-lg
+                    ${active
+                      ? "border-primary text-primary bg-primary/5"
+                      : "border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                    }
+                  `}
+                >
+                  <t.icon className="h-4 w-4" />
+                  {t.label}
+                  {t.badge > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold grid place-items-center px-1 shadow-md animate-pulse">
+                      {t.badge > 9 ? "9+" : t.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="mt-8">
+        {/* Contenu de l'onglet actif */}
+        <div>
           <Outlet />
         </div>
       </section>

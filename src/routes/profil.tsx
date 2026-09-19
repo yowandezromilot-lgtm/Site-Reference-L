@@ -1,13 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { AppShell } from "@/components/site/AppShell";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useApp } from "@/lib/store";
-import { Pencil, LogOut, X, Check, Camera, Upload, CreditCard } from "lucide-react";
+import { Pencil, LogOut, X, Check, Camera, Upload, CreditCard, CalendarDays, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/profil")({
   head: () => ({
@@ -40,12 +39,10 @@ function Profil() {
   const [form, setForm] = useState<import("@/lib/store").Client | undefined>(client);
   const [editing, setEditing] = useState(false);
 
-  // Photo previews
   const [photoPreview, setPhotoPreview] = useState<string | undefined>(undefined);
   const [cinRectoPreview, setCinRectoPreview] = useState<string | undefined>(undefined);
   const [cinVersoPreview, setCinVersoPreview] = useState<string | undefined>(undefined);
 
-  // Refs
   const photoRef = useRef<HTMLInputElement>(null);
   const cinRectoRef = useRef<HTMLInputElement>(null);
   const cinVersoRef = useRef<HTMLInputElement>(null);
@@ -61,23 +58,21 @@ function Profil() {
     return (
       <AppShell>
         <section className="mx-auto max-w-md px-4 py-20 text-center">
-          <Card className="border-border/60" style={{ boxShadow: "var(--shadow-card)" }}>
-            <CardContent className="p-8">
-              <p className="text-muted-foreground text-sm">Aucun profil client actif.</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">
-                Veuillez créer un profil ou vous connecter depuis la page d'accueil.
-              </p>
-              <Button
-                className="mt-6 w-full cursor-pointer"
-                onClick={() => {
-                  setState((s) => ({ ...s, showAddAccountGate: true }));
-                  navigate({ to: "/" });
-                }}
-              >
-                Se connecter
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="rounded-2xl border border-primary/20 bg-card/70 backdrop-blur-xl p-8 shadow-[0_20px_60px_-15px_oklch(0_0_0/0.5)]">
+            <p className="text-muted-foreground text-sm">Aucun profil client actif.</p>
+            <p className="text-xs text-muted-foreground/60 mt-1">
+              Veuillez créer un profil ou vous connecter depuis la page d'accueil.
+            </p>
+            <Button
+              className="mt-6 w-full cursor-pointer shadow-gold"
+              onClick={() => {
+                setState((s) => ({ ...s, showAddAccountGate: true }));
+                navigate({ to: "/" });
+              }}
+            >
+              Se connecter
+            </Button>
+          </div>
         </section>
       </AppShell>
     );
@@ -137,11 +132,18 @@ function Profil() {
   return (
     <AppShell>
       <section className="mx-auto max-w-5xl px-4 sm:px-6 py-14">
-        {/* Header + action buttons */}
-        <div className="flex items-start justify-between flex-wrap gap-4">
+        {/* Header */}
+        <div className="flex items-start justify-between flex-wrap gap-4 mb-10">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">Espace client</p>
-            <h1 className="font-display text-4xl mt-2">Mon Profil</h1>
+            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-primary mb-3">
+              <span className="w-6 h-px bg-primary inline-block" />
+              Espace client
+              <span className="w-6 h-px bg-primary inline-block" />
+            </div>
+            <h1 className="font-display text-4xl sm:text-5xl">
+              Mon <span className="text-gradient-gold">Profil</span>
+            </h1>
+            <div className="h-0.5 mt-3 w-16 bg-gradient-to-r from-primary to-transparent rounded-full" />
           </div>
 
           <div className="flex items-center gap-2 mt-2 flex-wrap">
@@ -149,7 +151,7 @@ function Profil() {
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-2"
+                className="gap-2 border-border/60 hover:border-primary/50"
                 onClick={() => setEditing(true)}
               >
                 <Pencil className="h-4 w-4" />
@@ -166,7 +168,7 @@ function Profil() {
                   <X className="h-4 w-4" />
                   Annuler
                 </Button>
-                <Button size="sm" className="gap-2" onClick={save}>
+                <Button size="sm" className="gap-2 shadow-gold" onClick={save}>
                   <Check className="h-4 w-4" />
                   Sauvegarder
                 </Button>
@@ -184,20 +186,25 @@ function Profil() {
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_2fr] mt-10">
-          {/* Profile card with photo */}
-          <Card className="border-border/60 h-fit">
-            <CardContent className="p-6 text-center">
-              {/* Profile photo */}
+        <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
+          {/* Carte profil */}
+          <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm overflow-hidden h-fit">
+            {/* Bande dégradée haut */}
+            <div className="h-24 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent relative">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,oklch(0.78_0.1_85/0.15),transparent_70%)]" />
+            </div>
+
+            <div className="px-6 pb-6 -mt-12 text-center">
+              {/* Photo profil */}
               <div className="relative mx-auto h-24 w-24 group">
                 {photoPreview ? (
                   <img
                     src={photoPreview}
                     alt="Photo de profil"
-                    className="h-24 w-24 rounded-full object-cover border-2 border-primary/30"
+                    className="h-24 w-24 rounded-full object-cover border-4 border-card ring-2 ring-primary/40"
                   />
                 ) : (
-                  <div className="h-24 w-24 grid place-items-center rounded-full font-display text-2xl bg-gradient-gold text-primary-foreground">
+                  <div className="h-24 w-24 grid place-items-center rounded-full font-display text-2xl bg-gradient-gold text-primary-foreground border-4 border-card ring-2 ring-primary/40">
                     {client.prenom[0]}
                     {client.nom[0]}
                   </div>
@@ -226,7 +233,8 @@ function Profil() {
               <div className="font-display text-xl mt-4">
                 {client.prenom} {client.nom}
               </div>
-              <div className="text-xs text-muted-foreground mt-1">
+              <div className="text-xs text-muted-foreground mt-1 flex items-center justify-center gap-1.5">
+                <CalendarDays className="h-3 w-3" />
                 Client depuis {new Date(client.date_inscription).getFullYear()}
               </div>
 
@@ -240,6 +248,7 @@ function Profil() {
                 </button>
               )}
 
+              {/* Stats */}
               <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-border/60">
                 <Stat value={myReservations.length} label="Réservations" />
                 <Stat
@@ -252,17 +261,18 @@ function Profil() {
                   label="Ancienneté"
                 />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Right column: form + CIN */}
+          {/* Colonne droite */}
           <div className="grid gap-6">
-            {/* Form card */}
-            <Card className="border-border/60">
-              <CardContent className="p-6 grid gap-4">
+            {/* Formulaire */}
+            <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm overflow-hidden">
+              <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+              <div className="p-6 grid gap-5">
                 {editing && (
-                  <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2">
-                    <Pencil className="h-3 w-3" />
+                  <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-xl px-3 py-2.5">
+                    <Pencil className="h-3 w-3 shrink-0" />
                     Mode édition actif — modifiez vos informations puis sauvegardez.
                   </div>
                 )}
@@ -316,21 +326,23 @@ function Profil() {
                     changer vos informations.
                   </p>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* CIN Recto / Verso card */}
-            <Card className="border-border/60">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <CreditCard className="h-4 w-4 text-primary" />
-                  <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+            {/* CIN card */}
+            <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm overflow-hidden">
+              <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+              <div className="p-6">
+                <div className="flex items-center gap-2.5 mb-5">
+                  <div className="grid place-items-center h-8 w-8 rounded-full bg-primary/15 text-primary">
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                  </div>
+                  <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                     Photos du CIN
                   </Label>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4">
-                  {/* Recto */}
                   <CinUploadZone
                     label="Recto"
                     preview={cinRectoPreview}
@@ -352,7 +364,6 @@ function Profil() {
                     }
                   />
 
-                  {/* Verso */}
                   <CinUploadZone
                     label="Verso"
                     preview={cinVersoPreview}
@@ -374,8 +385,8 @@ function Profil() {
                     }
                   />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -383,7 +394,7 @@ function Profil() {
   );
 }
 
-/* ── CIN Upload Zone ────────────────────────────────────────────────── */
+/* ── CIN Upload Zone ── */
 function CinUploadZone({
   label,
   preview,
@@ -399,7 +410,7 @@ function CinUploadZone({
 }) {
   if (preview) {
     return (
-      <div className="relative group rounded-lg overflow-hidden border border-border/60">
+      <div className="relative group rounded-xl overflow-hidden border border-border/60 hover:border-primary/40 transition-colors">
         <img
           src={preview}
           alt={`CIN ${label}`}
@@ -409,21 +420,21 @@ function CinUploadZone({
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
             <button
               onClick={onUpload}
-              className="text-xs text-white bg-black/60 px-3 py-1.5 rounded hover:bg-black/80 transition-colors inline-flex items-center gap-1.5"
+              className="text-xs text-white bg-black/60 px-3 py-1.5 rounded-lg hover:bg-black/80 transition-colors inline-flex items-center gap-1.5"
             >
               <Camera className="h-3 w-3" />
               Changer
             </button>
             <button
               onClick={onClear}
-              className="text-xs text-white bg-destructive/80 px-3 py-1.5 rounded hover:bg-destructive transition-colors inline-flex items-center gap-1.5"
+              className="text-xs text-white bg-destructive/80 px-3 py-1.5 rounded-lg hover:bg-destructive transition-colors inline-flex items-center gap-1.5"
             >
               <X className="h-3 w-3" />
               Retirer
             </button>
           </div>
         )}
-        <div className="absolute top-2 left-2 text-[10px] uppercase tracking-[0.15em] bg-black/60 text-white px-2 py-0.5 rounded font-medium backdrop-blur-sm">
+        <div className="absolute top-2 left-2 text-[10px] uppercase tracking-[0.15em] bg-black/60 text-white px-2.5 py-1 rounded-full font-medium backdrop-blur-sm border border-white/10">
           {label}
         </div>
       </div>
@@ -435,22 +446,22 @@ function CinUploadZone({
       onClick={() => {
         if (editing) onUpload();
       }}
-      className={`w-full border-2 border-dashed rounded-lg py-8 flex flex-col items-center gap-2 transition-colors ${
+      className={`w-full border-2 border-dashed rounded-xl py-8 flex flex-col items-center gap-2 transition-all ${
         editing
           ? "border-primary/20 hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
           : "border-border/40 cursor-default"
       }`}
     >
-      <div className="h-10 w-10 rounded-full bg-muted/40 grid place-items-center">
+      <div className="h-10 w-10 rounded-full bg-muted/40 grid place-items-center border border-border/50">
         <CreditCard className="h-5 w-5 text-muted-foreground" />
       </div>
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-xs text-muted-foreground font-medium">{label}</span>
       {editing && <span className="text-[10px] text-muted-foreground/50">JPG, PNG — max 3 Mo</span>}
     </button>
   );
 }
 
-/* ── Field ──────────────────────────────────────────────────────────── */
+/* ── Field ── */
 function Field({
   label,
   value,
@@ -463,10 +474,16 @@ function Field({
   onChange: (v: string) => void;
 }) {
   return (
-    <div>
-      <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">{label}</Label>
+    <div className="space-y-1.5">
+      <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+        {label}
+      </Label>
       <Input
-        className={`mt-1.5 transition-opacity ${disabled ? "opacity-60 cursor-default" : ""}`}
+        className={`border-border/50 bg-background/50 transition-all ${
+          disabled
+            ? "opacity-60 cursor-default"
+            : "hover:border-primary/40 focus:border-primary"
+        }`}
         value={value}
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
@@ -475,11 +492,11 @@ function Field({
   );
 }
 
-/* ── Stat ──────────────────────────────────────────────────────────── */
+/* ── Stat ── */
 function Stat({ value, label }: { value: string | number; label: string }) {
   return (
     <div>
-      <div className="font-display text-2xl text-primary">{value}</div>
+      <div className="font-display text-2xl text-gradient-gold font-bold">{value}</div>
       <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">
         {label}
       </div>

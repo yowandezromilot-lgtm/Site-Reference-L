@@ -1,14 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppShell } from "@/components/site/AppShell";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -70,14 +69,26 @@ function Contact() {
     <AppShell>
       <Toaster richColors position="top-right" />
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-14">
-        <p className="text-xs uppercase tracking-[0.2em] text-primary">Nous contacter</p>
-        <h1 className="font-display text-4xl mt-2">Une question, une demande sur mesure ?</h1>
-        <p className="text-muted-foreground mt-3 max-w-2xl">
-          Notre équipe est joignable 7j/7, 24h/24 — par téléphone, email ou via le formulaire
-          ci-dessous.
-        </p>
+        {/* Header premium */}
+        <div className="mb-12">
+          <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-primary mb-3">
+            <span className="w-6 h-px bg-primary inline-block" />
+            Nous contacter
+            <span className="w-6 h-px bg-primary inline-block" />
+          </div>
+          <h1 className="font-display text-4xl sm:text-5xl leading-tight">
+            Une question,{" "}
+            <span className="text-gradient-gold">une demande sur mesure ?</span>
+          </h1>
+          <p className="text-muted-foreground mt-4 max-w-2xl">
+            Notre équipe est joignable 7j/7, 24h/24 — par téléphone, email ou via le formulaire
+            ci-dessous.
+          </p>
+          <div className="h-0.5 mt-4 w-20 bg-gradient-to-r from-primary to-transparent rounded-full" />
+        </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr] mt-10">
+        <div className="grid gap-8 lg:grid-cols-[1fr_1.3fr]">
+          {/* Colonne info */}
           <div className="space-y-4">
             <InfoLine
               icon={MapPin}
@@ -103,53 +114,85 @@ function Contact() {
             <InfoLine icon={Clock} title="Disponibilité" lines={["7 jours sur 7", "24h sur 24"]} />
           </div>
 
-          <Card className="border-border/60" style={{ boxShadow: "var(--shadow-card)" }}>
-            <CardContent className="p-6">
-              <form onSubmit={submit} className="grid gap-4">
+          {/* Formulaire glassmorphism */}
+          <div className="rounded-2xl border border-primary/20 bg-card/70 backdrop-blur-xl overflow-hidden shadow-[0_20px_60px_-15px_oklch(0_0_0/0.5)]">
+            {/* Bande dorée sup */}
+            <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-primary to-transparent opacity-80" />
+
+            <div className="p-6 sm:p-8">
+              <div className="flex items-center gap-2.5 mb-6">
+                <div className="grid place-items-center h-8 w-8 rounded-full bg-primary/15 text-primary">
+                  <Send className="h-3.5 w-3.5" />
+                </div>
+                <p className="text-xs uppercase tracking-[0.22em] text-primary font-medium">
+                  Formulaire de contact
+                </p>
+              </div>
+
+              <form onSubmit={submit} className="grid gap-5">
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Nom</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+                      Nom
+                    </Label>
                     <Input
-                      className="mt-1.5"
                       value={form.nom}
                       onChange={(e) => setForm({ ...form, nom: e.target.value })}
+                      className="border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors"
+                      placeholder="Votre nom complet"
                     />
                   </div>
-                  <div>
-                    <Label>Téléphone</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+                      Téléphone
+                    </Label>
                     <Input
-                      className="mt-1.5"
                       value={form.tel}
                       onChange={(e) => setForm({ ...form, tel: e.target.value })}
+                      className="border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors"
+                      placeholder="+261 XX XX XXX XX"
                     />
                   </div>
                 </div>
-                <div>
-                  <Label>Objet</Label>
+
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+                    Objet
+                  </Label>
                   <Input
-                    className="mt-1.5"
                     value={form.objet}
                     onChange={(e) => setForm({ ...form, objet: e.target.value })}
+                    className="border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors"
+                    placeholder="Sujet de votre message"
                   />
                 </div>
-                <div>
-                  <Label>Message</Label>
+
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+                    Message
+                  </Label>
                   <Textarea
-                    className="mt-1.5 min-h-32"
+                    className="min-h-36 border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors resize-none"
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    placeholder="Décrivez votre demande en détail..."
                   />
                 </div>
+
                 <Button
                   type="submit"
-                  className="justify-self-end cursor-pointer"
+                  className="justify-self-end cursor-pointer shadow-gold hover:brightness-110 transition-all gap-2"
                   disabled={sending}
                 >
+                  <Send className="h-4 w-4" />
                   {sending ? "Envoi en cours..." : "Envoyer le message"}
                 </Button>
               </form>
-            </CardContent>
-          </Card>
+            </div>
+
+            {/* Bande dorée inf */}
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+          </div>
         </div>
       </section>
     </AppShell>
@@ -169,12 +212,12 @@ function InfoLine({
 }) {
   const body = (
     <div className="flex items-start gap-4">
-      <span className="grid h-10 w-10 place-items-center rounded-md border border-primary/30 text-primary shrink-0">
+      <span className="grid h-11 w-11 place-items-center rounded-xl border border-primary/30 bg-primary/10 text-primary shrink-0 transition-all group-hover:border-primary/60 group-hover:bg-primary/20">
         <Icon className="h-4 w-4" />
       </span>
       <div>
-        <div className="text-xs uppercase tracking-[0.18em] text-primary">{title}</div>
-        <div className="mt-1 text-sm text-foreground/90 leading-relaxed">
+        <div className="text-xs uppercase tracking-[0.18em] text-primary font-medium">{title}</div>
+        <div className="mt-1.5 text-sm text-foreground/90 leading-relaxed">
           {lines.map((l, i) => (
             <div key={i}>{l}</div>
           ))}
@@ -182,17 +225,16 @@ function InfoLine({
       </div>
     </div>
   );
+
   return (
-    <Card className="border-border/60">
-      <CardContent className="p-5">
-        {href ? (
-          <a href={href} className="block">
-            {body}
-          </a>
-        ) : (
-          body
-        )}
-      </CardContent>
-    </Card>
+    <div className="group rounded-xl border border-border/50 bg-card/60 backdrop-blur-sm p-5 hover:border-primary/30 hover:bg-card/80 transition-all duration-300">
+      {href ? (
+        <a href={href} className="block">
+          {body}
+        </a>
+      ) : (
+        body
+      )}
+    </div>
   );
 }
