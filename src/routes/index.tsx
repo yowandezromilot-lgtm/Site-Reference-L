@@ -272,8 +272,8 @@ function Hero({ vehiculesCount }: { vehiculesCount: number }) {
               <div className="relative w-full h-[260px] sm:h-[340px]">
                 <iframe
                   title="Référence Location — Mitabe, Diego Suarez"
-                  src="https://maps.google.com/maps?ll=-12.27570,49.29065&t=m&z=19&output=embed"
-                  className="absolute inset-0 w-full h-full border-0 grayscale-[30%] saturate-[120%]"
+                  src="https://maps.google.com/maps?q=-12.27570,49.29065&t=m&z=17&output=embed"
+                  className="absolute inset-0 w-full h-full border-0 invert-[90%] hue-rotate-180 contrast-125 saturate-150"
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
