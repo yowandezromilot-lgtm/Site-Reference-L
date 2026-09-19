@@ -668,8 +668,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
       return next;
     });
-  // Empty deps: setState is intentionally stable for its lifetime.
-  // hydrated is read from prev state inside setStateInternal, not from closure.
+    // Empty deps: setState is intentionally stable for its lifetime.
+    // hydrated is read from prev state inside setStateInternal, not from closure.
   }, []);
 
   return <AppContext.Provider value={{ state, setState }}>{children}</AppContext.Provider>;

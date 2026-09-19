@@ -360,8 +360,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                 Référence Location
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Le premier choix pour la location de voiture à Diego Suarez (Antsiranana). Service client
-                — 7j/7, 24h/24.
+                Le premier choix pour la location de voiture à Diego Suarez (Antsiranana). Service
+                client — 7j/7, 24h/24.
               </p>
             </div>
             <div>

@@ -59,6 +59,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --font-display: var(--font-display);
+  --font-sans: var(--font-body);
 }
 
 :root {
@@ -104,8 +106,9 @@
   --gradient-gold: linear-gradient(135deg, oklch(0.82 0.11 85), oklch(0.68 0.09 75));
   --gradient-hero: radial-gradient(
     ellipse at top,
-    oklch(0.24 0.02 70) 0%,
-    oklch(0.13 0.005 60) 60%
+    oklch(0.24 0.02 70 / 0.82) 0%,
+    oklch(0.14 0.008 60 / 0.88) 55%,
+    oklch(0.12 0.005 60 / 0.96) 100%
   );
   --shadow-gold: 0 18px 50px -20px oklch(0.78 0.1 85 / 0.45);
   --shadow-card: 0 8px 30px -12px oklch(0 0 0 / 0.6);
@@ -135,11 +138,6 @@
     font-family: var(--font-display);
     letter-spacing: -0.01em;
   }
-}
-
-@theme inline {
-  --font-display: var(--font-display);
-  --font-sans: var(--font-body);
 }
 
 /* Custom premium design system utility classes */
@@ -185,8 +183,12 @@
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slide-in-right {
@@ -225,13 +227,27 @@
   animation: scale-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.anim-d1 { animation-delay: 0.1s; }
-.anim-d2 { animation-delay: 0.2s; }
-.anim-d3 { animation-delay: 0.3s; }
-.anim-d4 { animation-delay: 0.4s; }
-.anim-d5 { animation-delay: 0.5s; }
-.anim-d6 { animation-delay: 0.6s; }
-.anim-d7 { animation-delay: 0.7s; }
+.anim-d1 {
+  animation-delay: 0.1s;
+}
+.anim-d2 {
+  animation-delay: 0.2s;
+}
+.anim-d3 {
+  animation-delay: 0.3s;
+}
+.anim-d4 {
+  animation-delay: 0.4s;
+}
+.anim-d5 {
+  animation-delay: 0.5s;
+}
+.anim-d6 {
+  animation-delay: 0.6s;
+}
+.anim-d7 {
+  animation-delay: 0.7s;
+}
 
 /* ── Transitions de page ── */
 @keyframes page-enter {
@@ -266,25 +282,70 @@
 
 /* ── Animation de fond de site (Animated Background) ── */
 @keyframes float-slow-1 {
-  0%, 100% { transform: translate(0px, 0px) scale(1); }
-  50% { transform: translate(80px, -50px) scale(1.18); }
+  0%,
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(80px, -50px) scale(1.18);
+  }
 }
 
 @keyframes float-slow-2 {
-  0%, 100% { transform: translate(0px, 0px) scale(1); }
-  50% { transform: translate(-70px, 60px) scale(1.25); }
+  0%,
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(-70px, 60px) scale(1.25);
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.12; }
-  50% { opacity: 0.32; }
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.32;
+  }
 }
 
 .anim-float-1 {
-  animation: float-slow-1 20s ease-in-out infinite, pulse-glow 9s ease-in-out infinite;
+  animation:
+    float-slow-1 20s ease-in-out infinite,
+    pulse-glow 9s ease-in-out infinite;
 }
 
 .anim-float-2 {
-  animation: float-slow-2 26s ease-in-out infinite, pulse-glow 12s ease-in-out infinite;
+  animation:
+    float-slow-2 26s ease-in-out infinite,
+    pulse-glow 12s ease-in-out infinite;
 }
 
+@keyframes float-slow-3 {
+  0%,
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(50px, -40px) scale(1.16);
+  }
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
+.anim-float-3 {
+  animation:
+    float-slow-3 22s ease-in-out infinite,
+    pulse-glow 11s ease-in-out infinite;
+}
+
+.anim-dash-flow {
+  stroke-dasharray: 8 18;
+  animation: dash-flow 28s linear infinite;
+}

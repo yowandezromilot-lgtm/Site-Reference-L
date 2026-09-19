@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/site/AppShell";
+import { HeroAnimatedBackground } from "@/components/site/HeroAnimatedBackground";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -168,9 +169,10 @@ function Accueil() {
 function Hero({ vehiculesCount }: { vehiculesCount: number }) {
   return (
     <section className="relative overflow-hidden bg-gradient-hero">
-      <div className="absolute inset-0 opacity-[0.05] bg-hero-glow pointer-events-none" />
+      {/* Arrière-plan animé immersif : orbes dorées, poussières d'or et tracés de route */}
+      <HeroAnimatedBackground />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-20 pb-24 sm:pt-28 sm:pb-32">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 pt-20 pb-24 sm:pt-28 sm:pb-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* ── Colonne gauche : texte ── */}
           <div>

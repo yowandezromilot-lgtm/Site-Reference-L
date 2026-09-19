@@ -61,7 +61,8 @@ export function ProfileGate({ children }: { children: ReactNode }) {
           setState((s) => {
             if (
               s.currentClientId === parsed.clientId &&
-              JSON.stringify(s.connectedClientIds) === JSON.stringify(parsed.connectedIds || [parsed.clientId])
+              JSON.stringify(s.connectedClientIds) ===
+                JSON.stringify(parsed.connectedIds || [parsed.clientId])
             ) {
               return s;
             }
