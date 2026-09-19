@@ -114,18 +114,29 @@ function Accueil() {
         setLieuRetour={setLieuRetour}
       />
 
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
-        <div className="flex items-end justify-between mb-8">
+      {/* ═══ Section parc de véhicules ═══ */}
+      <section id="vehicules" className="relative mx-auto max-w-7xl px-4 sm:px-6 py-16">
+        {/* En-tête de section */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">Notre parc</p>
-            <h2 className="font-display text-3xl sm:text-4xl mt-2">Véhicules disponibles</h2>
+            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-primary mb-3">
+              <span className="w-6 h-px bg-primary inline-block" />
+              Notre parc
+              <span className="w-6 h-px bg-primary inline-block" />
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl leading-tight">
+              Véhicules <span className="text-gradient-gold">disponibles</span>
+            </h2>
+            <div className="h-0.5 mt-3 w-16 bg-gradient-to-r from-primary to-transparent rounded-full" />
           </div>
-          <div className="text-sm text-muted-foreground">
-            {filtered.length} véhicule{filtered.length > 1 ? "s" : ""}
+          <div className="flex items-center gap-2">
+            <div className="rounded-full border border-primary/30 bg-primary/10 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-primary">
+              {filtered.length} véhicule{filtered.length > 1 ? "s" : ""}
+            </div>
           </div>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((v) => (
             <VehiculeCard
               key={v.id}
@@ -143,8 +154,9 @@ function Accueil() {
             />
           ))}
           {filtered.length === 0 && (
-            <div className="col-span-full text-center py-16 text-muted-foreground">
-              Aucun véhicule ne correspond à vos critères.
+            <div className="col-span-full flex flex-col items-center justify-center py-20 gap-4 text-muted-foreground">
+              <Car className="h-12 w-12 opacity-20" />
+              <p className="text-base">Aucun véhicule ne correspond à vos critères.</p>
             </div>
           )}
         </div>
@@ -316,108 +328,142 @@ function SearchBar(p: SearchBarProps) {
   const vehicleTypes = Array.from(new Set(state.vehicules.map((v) => v.type))).filter(Boolean);
 
   return (
-    <div id="parc" className="mx-auto max-w-7xl px-4 sm:px-6 -mt-12 relative z-10">
-      <Card className="border-primary/20 shadow-card">
-        <CardContent className="p-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7">
-          <div>
-            <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-              Type
-            </Label>
-            <Select value={p.type} onValueChange={p.setType}>
-              <SelectTrigger className="mt-2">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tous les types</SelectItem>
-                {vehicleTypes.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {t}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+    <div id="parc" className="mx-auto max-w-7xl px-4 sm:px-6 -mt-14 relative z-20">
+      {/* Panneau de recherche glassmorphism premium */}
+      <div className="rounded-2xl border border-primary/25 bg-card/70 backdrop-blur-xl shadow-[0_20px_60px_-15px_oklch(0_0_0/0.6)] overflow-hidden">
+        {/* Bande dorée supérieure */}
+        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-primary to-transparent opacity-70" />
+
+        <div className="p-5 sm:p-6">
+          {/* Titre et icône */}
+          <div className="flex items-center gap-2 mb-5">
+            <div className="grid place-items-center h-7 w-7 rounded-full bg-primary/15 text-primary">
+              <CalendarDays className="h-3.5 w-3.5" />
+            </div>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary font-medium">
+              Rechercher un véhicule
+            </p>
           </div>
-          <div>
-            <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-              Places
-            </Label>
-            <Select value={p.places} onValueChange={p.setPlaces}>
-              <SelectTrigger className="mt-2">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toutes</SelectItem>
-                <SelectItem value="2">2+</SelectItem>
-                <SelectItem value="5">5+</SelectItem>
-                <SelectItem value="7">7+</SelectItem>
-                <SelectItem value="9">9+</SelectItem>
-              </SelectContent>
-            </Select>
+
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7">
+            {/* Type */}
+            <div className="space-y-1.5">
+              <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-1.5">
+                <Car className="h-3 w-3" /> Type
+              </Label>
+              <Select value={p.type} onValueChange={p.setType}>
+                <SelectTrigger className="border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les types</SelectItem>
+                  {vehicleTypes.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Places */}
+            <div className="space-y-1.5">
+              <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-1.5">
+                <Users className="h-3 w-3" /> Places
+              </Label>
+              <Select value={p.places} onValueChange={p.setPlaces}>
+                <SelectTrigger className="border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Toutes</SelectItem>
+                  <SelectItem value="2">2+</SelectItem>
+                  <SelectItem value="5">5+</SelectItem>
+                  <SelectItem value="7">7+</SelectItem>
+                  <SelectItem value="9">9+</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Lieu Départ */}
+            <div className="space-y-1.5">
+              <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-1.5">
+                <MapPin className="h-3 w-3" /> Lieu Départ
+              </Label>
+              <Input
+                list="lieux-suggestions"
+                value={p.lieuDepart}
+                onChange={(e) => p.setLieuDepart(e.target.value)}
+                placeholder="Ex: Aéroport..."
+                className="border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors"
+              />
+            </div>
+
+            {/* Lieu Retour */}
+            <div className="space-y-1.5">
+              <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-1.5">
+                <MapPin className="h-3 w-3" /> Lieu Retour
+              </Label>
+              <Input
+                list="lieux-suggestions"
+                value={p.lieuRetour}
+                onChange={(e) => p.setLieuRetour(e.target.value)}
+                placeholder="Ex: Centre-ville..."
+                className="border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors"
+              />
+            </div>
+
+            <datalist id="lieux-suggestions">
+              {suggestions.map((s, i) => (
+                <option key={i} value={s} />
+              ))}
+            </datalist>
+
+            {/* Date Départ */}
+            <div className="space-y-1.5">
+              <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-1.5">
+                <CalendarDays className="h-3 w-3" /> Départ
+              </Label>
+              <Input
+                type="date"
+                value={p.dateDepart}
+                onChange={(e) => p.setDateDepart(e.target.value)}
+                className="border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors"
+              />
+            </div>
+
+            {/* Date Retour */}
+            <div className="space-y-1.5">
+              <Label className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-1.5">
+                <CalendarDays className="h-3 w-3" /> Retour
+              </Label>
+              <Input
+                type="date"
+                value={p.dateRetour}
+                onChange={(e) => p.setDateRetour(e.target.value)}
+                className="border-border/50 bg-background/50 hover:border-primary/40 focus:border-primary transition-colors"
+              />
+            </div>
+
+            {/* Bouton recherche */}
+            <div className="flex items-end">
+              <Button
+                className="w-full shadow-gold font-medium tracking-wide hover:brightness-110 transition-all"
+                onClick={() => {
+                  const el = document.getElementById("vehicules");
+                  if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: "smooth" });
+                }}
+              >
+                <Compass className="h-4 w-4 mr-1.5" />
+                Rechercher
+              </Button>
+            </div>
           </div>
-          <div>
-            <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-              Lieu Départ
-            </Label>
-            <Input
-              list="lieux-suggestions"
-              value={p.lieuDepart}
-              onChange={(e) => p.setLieuDepart(e.target.value)}
-              className="mt-2"
-              placeholder="Ex: Aéroport..."
-            />
-          </div>
-          <div>
-            <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-              Lieu Retour
-            </Label>
-            <Input
-              list="lieux-suggestions"
-              value={p.lieuRetour}
-              onChange={(e) => p.setLieuRetour(e.target.value)}
-              className="mt-2"
-              placeholder="Ex: Centre-ville..."
-            />
-          </div>
-          <datalist id="lieux-suggestions">
-            {suggestions.map((s, i) => (
-              <option key={i} value={s} />
-            ))}
-          </datalist>
-          <div>
-            <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-              Départ
-            </Label>
-            <Input
-              type="date"
-              value={p.dateDepart}
-              onChange={(e) => p.setDateDepart(e.target.value)}
-              className="mt-2"
-            />
-          </div>
-          <div>
-            <Label className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-              Retour
-            </Label>
-            <Input
-              type="date"
-              value={p.dateRetour}
-              onChange={(e) => p.setDateRetour(e.target.value)}
-              className="mt-2"
-            />
-          </div>
-          <div className="flex items-end">
-            <Button
-              className="w-full h-10 shadow-gold"
-              onClick={() => {
-                const el = document.getElementById("parc");
-                if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: "smooth" });
-              }}
-            >
-              Rechercher
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Bande dorée inférieure */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+      </div>
     </div>
   );
 }
@@ -448,37 +494,54 @@ function VehiculeCard({
   };
 
   return (
-    <Card className="group overflow-hidden border-border/60 hover:border-primary/40 shadow-card transition-all flex flex-col">
-      <div className="relative h-44 w-full overflow-hidden bg-muted shrink-0">
+    <div className="group relative flex flex-col rounded-2xl overflow-hidden border border-border/50 hover:border-primary/50 bg-card shadow-card hover:shadow-[0_20px_50px_-15px_oklch(0.78_0.1_85/0.3)] transition-all duration-500 hover:-translate-y-1">
+      {/* Zone image */}
+      <div className="relative h-52 w-full overflow-hidden bg-muted shrink-0">
         {images.length > 0 ? (
           <>
             <img
               src={images[imgIdx]}
               alt={`${v.marque} ${v.modele}`}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 cursor-pointer"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer"
               onClick={() => setShowImage(true)}
             />
+            {/* Gradient overlay cinématique */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            {/* Bouton d'aperçu centré sur hover */}
+            <button
+              onClick={() => setShowImage(true)}
+              className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+            >
+              <div className="bg-black/50 backdrop-blur-sm rounded-full p-3 border border-white/20 text-white hover:bg-primary/80 hover:border-primary transition-all">
+                <Eye className="h-5 w-5" />
+              </div>
+            </button>
+
             {images.length > 1 && (
               <>
                 <button
                   type="button"
                   onClick={prevImg}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-black/40 text-white hover:bg-black/70 transition-colors z-20"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-primary/80 transition-all z-20"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
                 <button
                   type="button"
                   onClick={nextImg}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-black/40 text-white hover:bg-black/70 transition-colors z-20"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-primary/80 transition-all z-20"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
-                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-20">
+                <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-20">
                   {images.map((_, idx) => (
-                    <div
+                    <button
                       key={idx}
-                      className={`h-1.5 rounded-full transition-all ${idx === imgIdx ? "w-4 bg-primary" : "w-1.5 bg-white/50"}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setImgIdx(idx);
+                      }}
+                      className={`rounded-full transition-all duration-300 ${idx === imgIdx ? "w-5 h-1.5 bg-primary" : "w-1.5 h-1.5 bg-white/50 hover:bg-white/80"}`}
                     />
                   ))}
                 </div>
@@ -493,7 +556,7 @@ function VehiculeCard({
                   <img
                     src={images[imgIdx]}
                     alt={`${v.marque} ${v.modele}`}
-                    className="w-full h-auto rounded-lg object-contain max-h-[85vh]"
+                    className="w-full h-auto rounded-xl object-contain max-h-[85vh]"
                   />
                   {images.length > 1 && (
                     <>
@@ -524,50 +587,93 @@ function VehiculeCard({
             </span>
           </div>
         )}
-        <Badge
-          className={`absolute top-3 right-3 z-10 ${v.disponible ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+
+        {/* Badge disponibilité avec dot animé */}
+        <div
+          className={`absolute top-3 right-3 z-10 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-sm border ${
+            v.disponible
+              ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-300"
+              : "bg-muted/60 border-border/40 text-muted-foreground"
+          }`}
         >
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              v.disponible ? "bg-emerald-400 animate-pulse" : "bg-muted-foreground"
+            }`}
+          />
           {v.disponible ? "Disponible" : "En location"}
-        </Badge>
-        <span className="absolute top-3 left-3 z-10 text-[10px] uppercase tracking-[0.18em] text-white bg-black/60 px-2 py-0.5 rounded font-medium backdrop-blur-sm">
+        </div>
+
+        {/* Badge type en haut gauche */}
+        <span className="absolute top-3 left-3 z-10 text-[10px] uppercase tracking-[0.18em] text-white/90 bg-black/55 backdrop-blur-sm px-2.5 py-1 rounded-full font-medium border border-white/10">
           {v.type}
         </span>
       </div>
-      <CardContent className="p-5">
-        <div className="flex items-baseline justify-between gap-2">
-          <h3 className="font-display text-xl">
+
+      {/* Contenu de la carte */}
+      <div className="flex flex-col flex-1 p-5 gap-4">
+        {/* Titre + immat */}
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-display text-xl leading-tight group-hover:text-primary transition-colors">
             {v.marque} {v.modele}
           </h3>
-          <span className="text-xs text-muted-foreground">{v.immatriculation}</span>
+          <span className="text-[10px] text-muted-foreground bg-muted/60 px-2 py-0.5 rounded font-mono shrink-0">
+            {v.immatriculation}
+          </span>
         </div>
-        <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5">
-            <Users className="h-4 w-4" />
+
+        {/* Caractéristiques */}
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5 bg-muted/40 rounded-lg px-2.5 py-1">
+            <Users className="h-3.5 w-3.5 text-primary/70" />
             {v.places} places
           </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Car className="h-4 w-4" />
+          <span className="inline-flex items-center gap-1.5 bg-muted/40 rounded-lg px-2.5 py-1">
+            <Car className="h-3.5 w-3.5 text-primary/70" />
             {v.type}
           </span>
         </div>
-        <div className="mt-5 flex items-end justify-between">
+
+        {/* Séparateur doré */}
+        <div className="h-px bg-gradient-to-r from-primary/20 via-primary/40 to-transparent" />
+
+        {/* Prix + CTA */}
+        <div className="flex items-end justify-between mt-auto">
           <div>
-            <div className="font-display text-2xl text-primary">{formatAr(v.prix_jour)}</div>
-            <div className="text-xs text-muted-foreground">
-              par jour {jours ? `· ${jours} j = ${formatAr(v.prix_jour * jours)}` : ""}
+            <div className="font-display text-2xl text-gradient-gold font-bold">
+              {formatAr(v.prix_jour)}
+            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              par jour
+              {jours ? (
+                <span className="ml-1.5 text-primary/80 font-medium">
+                  · {jours} j = {formatAr(v.prix_jour * jours)}
+                </span>
+              ) : (
+                ""
+              )}
             </div>
             {v.prix_hors_ville && (
-              <div className="text-[10px] mt-0.5 text-primary/80 font-medium">
+              <div className="text-[10px] mt-1 text-primary/70 font-medium">
                 Hors ville : {formatAr(v.prix_hors_ville)} /j
               </div>
             )}
           </div>
-          <Button disabled={!v.disponible} onClick={onReserve} size="sm">
+          <Button
+            disabled={!v.disponible}
+            onClick={onReserve}
+            size="sm"
+            className="shadow-gold hover:brightness-110 transition-all"
+          >
+            <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
             Réserver
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Ligne décorative dorée en bas au hover */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    </div>
   );
 }
 
